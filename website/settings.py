@@ -144,4 +144,4 @@ EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'rajatchorouk@outlook.fr'
-EMAIL_HOST_PASSWORD = 'Ifjkz1601'
+EMAIL_HOST_PASSWORD = 'c'
