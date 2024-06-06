@@ -1,0 +1,40 @@
+{%extends 'base.html'%}
+{% load widget_tweaks%}
+{% block content%}
+<form action="" method="post">
+{% csrf_token %}
+<!-- Email -->
+<div class="form-group">
+    <label for="{{ form.email.id_for_label }}">Email:</label>
+    {% render_field form.email class="form-control" %}
+    <!-- You can add additional styling or classes here -->
+</div>
+<!-- First Name -->
+<div class="form-group">
+    <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+    {% render_field form.first_name class="form-control" %}
+    <!-- You can add additional styling or classes here -->
+</div>
+<!-- Last Name -->
+<div class="form-group">
+    <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+    {% render_field form.last_name class="form-control" %}
+    <!-- You can add additional styling or classes here -->
+    <input type="text" >
+</div>
+<!-- Subject -->
+<div class="form-group">
+    <label for="{{ form.subject.id_for_label }}">Subject:</label>
+    {% render_field form.subject class="form-control" %}
+    <!-- You can add additional styling or classes here -->
+</div>
+<!-- Department -->
+<div class="form-group">
+    <label for="{{ form.department.id_for_label }}">Department:</label>
+    {% render_field form.department class="form-control" %}
+    <!-- You can add additional styling or classes here -->
+</div>
+
+<button type="submit" >Créer</button>
+</form>
+{%endblock%}

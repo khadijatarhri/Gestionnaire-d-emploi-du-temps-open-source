@@ -1,0 +1,395 @@
+{% extends 'base.html'%}
+{% csrf_token %}
+
+{%block nav_items%}
+    <li><a href="{%url 'generer'%}" class="red" >Générer</a></li>
+    <li><a href="{%url 'ajouter'%}" class="green">Ajouter/Supprimer</a></li>
+{%endblock%}
+
+{%block content%}
+<!--<div class="drop">
+    <h3>Ajouter object (js make it )</h3>
+    <div class="dropdown">
+        <div class="select">
+            <span class="Selected">Professeur</span>
+        </div>
+        <ul class="menu">
+            <li class="active">Professeur</li>
+            <li>Module</li>
+        </ul>
+    </div>
+</div>
+    <br><br>
+    <div class="drop">
+        <h3>Supprimer object (js make it later)</h3>
+        <div class="dropdown">
+            <div class="select">
+                <span class="Selected">Professeur</span>
+            </div>
+            <ul class="menu">
+                <li class="active">Professeur</li>
+                <li>Module</li>
+            </ul>
+        </div>
+    </div>-->
+
+
+<style>
+
+
+
+.select-menu {
+    width: 100%;
+    position: relative;
+    margin: 20px 0;
+}
+
+.select-menu .select-btn {
+    display: flex;
+    width: 100%;
+    height: 55px;
+    background: #fff;
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: 400;
+    border-radius: 8px;
+    align-items: center;
+    cursor: pointer;
+    justify-content: space-between;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.select-btn i {
+    font-size: 25px;
+    transition: 0.3s;
+}
+
+.select-menu.active .select-btn i {
+    transform: rotate(-180deg);
+}
+
+.select-menu .options {
+    position: absolute;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1;
+}
+
+.select-menu.active .options {
+    display: block;
+}
+
+.options .option {
+    display: flex;
+    height: 55px;
+    cursor: pointer;
+    padding: 0 16px;
+    border-radius: 8px;
+    align-items: center;
+    background: #fff;
+}
+
+.options .option:hover {
+    background: #F2F2F2;
+}
+
+.option i {
+    font-size: 25px;
+    margin-right: 12px;
+}
+
+.option .option-text {
+    font-size: 18px;
+    color: #333;
+}
+
+/* General styling for the form container */
+.ajouter_chef {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.optionAS {
+    width: 40%;
+    margin: 25px;
+    padding: 20px;
+    border: 1px solid rgb(99, 97, 97);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.optionAS label,
+.optionAS input[type="text"],
+.optionAS input[type="submit"] {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.s {
+    color: rgb(254, 69, 69);
+    text-align: center;
+}
+
+.a {
+    color: rgb(98, 203, 82);
+    text-align: center;
+}
+
+.optionAS input[type="text"],
+.optionAS input[type="submit"] {
+    width: 75%;
+    margin-bottom: 10px;
+    height: 45px;
+}
+
+.optionAS input[type="radio"] {
+    display: inline;
+    margin: 6px;
+}
+
+.optionAS input[type="submit"] {
+    margin-top: 25px;
+}
+
+.optionAS select {
+    width: 100%;
+    height: 30px;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+}
+
+.optionAS input[type="text"] {
+    width: 100%;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+}
+
+.niveau {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.submit_c {
+    text-align: center;
+}
+
+.error {
+    color: rgb(254, 69, 69);
+}
+
+.success {
+    color: rgb(98, 203, 82);
+}
+
+</style>
+<div class="ajouter_chef">
+    <!-- Ajouter Professeur -->
+    <div class="optionAS">
+        <h3 class="a">Ajouter Professeur</h3><br>
+        <form action="{% url 'creer_prof' %}" method="post">
+            {% csrf_token %}
+            <label for="username">Username</label>
+            <input type="text" name="username" placeholder="Username"><br>
+            <label for="email">Email</label>
+            <input type="text" name="email" placeholder="Email"><br>
+            <label for="departement">Département</label>
+            <div class="select-menu" id="select-menu-d-ap">
+                <div class="select-btn">
+                    <span class="sbtn-text">Selectionner une option</span>
+                    <i class="bx bx_chevron-down"></i>
+                </div>
+                <ul class="options">
+                    <li class="option">
+                        <span class="option-text">Génie Logiciel</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Web and Mobile Engineering</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Informatique et Aide à la Décision</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Réseaux de communications</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Langues et Communication</span>
+                    </li>
+                </ul>
+            </div>
+            <input type="hidden" name="selected_option_d_ap" id="selected-option-d-ap">
+            <div class="submit_c"><input type="submit" value="Créer"></div>
+        </form>
+        {% if error_message1 %}
+            <h3 class="error">{{ error_message1 }}</h3>
+        {% elif success_message1 %}
+            <h3 class="success">{{ success_message1 }}</h3>
+        {% endif %}
+    </div>
+
+    <!-- Ajouter Module -->
+    <div class="optionAS">
+        <h3 class="a">Ajouter Module</h3><br>
+        <form action="{% url 'creer_module' %}" method="post">
+            {% csrf_token %}
+            <label for="name">Name</label>
+            <input type="text" name="name" placeholder="Name" required><br>
+            <label for="department">Département :</label>
+            <div class="select-menu" id="select-menu-d-am">
+                <div class="select-btn">
+                    <span class="sbtn-text">Selectionner une option</span>
+                    <i class="bx bx_chevron-down"></i>
+                </div>
+                <ul class="options">
+                    <li class="option">
+                        <span class="option-text">Génie Logiciel</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Web and Mobile Engineering</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Informatique et Aide à la Décision</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Réseaux de communications</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Langues et Communication</span>
+                    </li>
+                </ul>
+            </div>
+            <input type="hidden" name="selected_option_d_am" id="selected-option-d-am">
+            <label for="filiere">Filière :</label>
+            <div class="select-menu" id="select-menu-f-am">
+                <div class="select-btn">
+                    <span class="sbtn-text">Selectionner une option</span>
+                    <i class="bx bx_chevron-down"></i>
+                </div>
+                <ul class="options">
+                    <li class="option">
+                        <span class="option-text">Génie Logiciel</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Buisness intelligence & analytics</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Ingénieurie data science & iot</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Sécurité des systèmes informatiques</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Smart suply chaine & logistics</span>
+                    </li>
+                    <li class="option">
+                        <span class="option-text">Ingénierie de la data et finance digitale</span>
+                    </li>
+                </ul>
+            </div>
+            <input type="hidden" name="selected_option_f_am" id="selected-option-f-am">
+            <div class="niveau">
+                <label for="annee">Niveau :</label>
+                <div><input type="radio" name="annee" value="1A"><label for="annee">1A</label></div>
+                <div><input type="radio" name="annee" value="2A"><label for="annee">2A</label></div>
+                <div><input type="radio" name="annee" value="3A"><label for="annee">3A</label></div>
+            </div>
+            <div class="submit_c"><input type="submit" value="Créer"></div>
+        </form>
+        {% if error_message2 %}
+            <h3 class="error">{{ error_message2 }}</h3>
+        {% elif success_message2 %}
+            <h3 class="success">{{ success_message2 }}</h3>
+        {% endif %}
+    </div>
+
+    <!-- Supprimer Professeur -->
+    <div class="optionAS">
+        <h3 class="s">Supprimer Professeur</h3><br>
+        <form action="{% url 'supprimer_prof' %}" method="post">
+            {% csrf_token %}
+            <label for="username">Email :</label>
+            <input type="text" name="username" placeholder="Email"><br>
+            <div class="submit_c"><input type="submit" value="Supprimer"></div>
+        </form>
+        {% if error_message3 %}
+            <h3 class="error">{{ error_message3 }}</h3>
+        {% elif success_message3 %}
+            <h3 class="success">{{ success_message3 }}</h3>
+        {% endif %}
+    </div>
+
+    <!-- Supprimer Module -->
+    <div class="optionAS">
+        <h3 class="s">Supprimer Module</h3><br>
+        <form action="{% url 'supprimer_module' %}" method="post">
+            {% csrf_token %}
+            <label for="name">Nom du Module :</label>
+            <input type="text" name="name" placeholder="Name"><br>
+            <div class="submit_c"><input type="submit" value="Supprimer"></div>
+        </form>
+        {% if error_message4 %}
+            <h3 class="error">{{ error_message4 }}</h3>
+        {% elif success_message4 %}
+            <h3 class="success">{{ success_message4 }}</h3>
+        {% endif %}
+    </div>
+</div>
+ 
+<script >
+
+// Mapping from full text to abbreviations
+const textToAbbrev = {
+    "Génie Logiciel": "gl",
+    "Buisness intelligence & analytics": "bia",
+    "Ingénieurie data science & iot": "idsit",
+    "sécurité des systèmes informatiques": "ssi",
+    "Ingénierie des Systèmes Embarqués": "sse",
+    "Smart suply chaine & logistics": "2scl",
+    "Ingénierie de la data et finance digitale": "idf"
+};
+
+document.querySelectorAll('.select-menu').forEach(menu => {
+    const selectBtn = menu.querySelector('.select-btn');
+    const options = menu.querySelectorAll('.option');
+    const sBtn_text = menu.querySelector('.sbtn-text');
+    const hiddenInput = menu.querySelector('input[type="hidden"]');
+
+    selectBtn.addEventListener('click', () => menu.classList.toggle('active'));
+
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+            let selectedOption = option.querySelector('.option-text').innerText;
+            sBtn_text.innerText = selectedOption;
+
+            hiddenInput.value = selectedOption;
+            menu.classList.remove('active');
+        });
+    });
+});
+</script>
+    {% endblock %}
+
+

@@ -1,0 +1,344 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+
+header{
+    height: 190px;
+    width: 100%;
+}
+nav{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 25px;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+nav ul li{
+    list-style-type: none;
+    display: inline-block;
+    padding: 10px 20px;
+}
+
+nav ul li a{
+    color:rgb(44, 44, 44);
+    text-decoration: none;
+    font-weight: bold;
+
+
+}
+
+nav ul li a:hover.red{
+    color:rgb(254, 69, 69);
+    transition: .2s;    
+}
+
+nav ul li a:hover.green{
+    color:rgb(98, 203, 82);
+    transition: .2s;    
+}
+
+button{
+    border: none;
+    background: rgb(44,44,44);
+    padding:10px 25px;
+    border-radius: 25px;
+    color:white;
+    transition: .4s;
+}
+
+button:hover{
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+
+.login_form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    border-radius: 30px;
+}
+
+.login_form h2{
+    text-align: center;
+    padding: 0 0 20px 0;
+    border-bottom: px solid rgb(44, 44, 44);
+}
+
+.login_form form{
+    padding: 0 40px;
+    box-sizing: border-box;
+}
+
+form .txt_field{
+    position: relative;
+    border-bottom: 2px solid rgb(44, 44, 44);
+    margin: 25px 0;
+}
+
+.txt_field input{
+    width: 100%;
+    padding: 0 5px;
+    height: 30px;
+    font-size: 15px;
+    border: none;
+    background:none;
+    outline: none;
+}
+
+.txt_field label{
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    color: #adadad;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.txt_field span::before{
+    content:'';
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transition: .5s;
+}
+
+.txt_field input:focus ~ label,
+.txt_field input:valid ~ label{
+    top: -5px;
+    color:rgb(98, 203, 82);
+}
+
+.txt_field input:focus ~ span::before,
+.txt_field input:valid ~ span::before{
+    width:100%;
+    background: rgb(98, 203, 82);
+}
+
+.pass{
+    margin: -5px 0 20px 5px;
+    color: #adadad;
+    cursor: pointer;
+}
+
+
+.pass:hover{
+    text-decoration: underline;
+    
+}
+
+/* submit button style*/
+input[type="submit"]{
+    font-size: 18px;
+    width:100%;
+    height:35px;
+    border: 1px solid;
+    background:rgb(44, 44, 44);
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    outline: none;
+}
+
+input[type="submit"]:hover{
+    background-color: rgb(254, 69, 69);
+    transition: .5s;
+    transform: scale(1.1);
+}
+
+/* home page*/
+
+.departement_choix{
+    position: absolute;
+    left: 20%;
+    top: 40%;
+}
+
+.departement{
+    position:absolute;
+    left:50%;
+    margin-top: 15px;
+}
+
+.departement button{
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
+    width:450px;
+    height:35px;
+    border: 1px solid;
+    background:rgb(44, 44, 44);
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    outline: none;
+    align-items: center;
+}
+
+.departement button:hover{
+    background-color:rgb(98, 203, 82);
+    transition: .5s;
+    transform: scale(1.1);
+}
+
+.departement a{
+    text-decoration: none;
+}
+
+
+/* dropdown style */
+
+.dropdown{
+    min-width: 15em;
+    position: relative;
+    margin: 2em;
+}
+
+.dropdown * {
+    box-sizing: border-box;
+}
+
+.select{
+    background: #adadad;
+    color: rgb(44, 44, 44);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px #adadad solid;
+    border-radius: 0.5em;
+    padding: 1em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.select-clicked{
+    border: 2px gray solid;
+    box-shadow: 0 0 0.8em gray;
+}
+
+.select:hover{
+    background: whitesmoke;
+}
+.caret{
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #fff;
+    transition: 0.3s;
+}
+
+.caret-rotate{
+    transform:rotate(180deg);
+}
+
+.menu{
+    list-style: none;
+    padding: 0.2em 0.5em;
+    background: #bdbdbd;
+    border: 1px gray solid;
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2);
+    border-radius: 0.5em;
+    color: #bdbdbd;
+    position: absolute;
+    top: 3em;
+    left: 50%;
+    width: 100%;
+    transform: translateX((50%));
+    opacity: 0;
+    display: none;
+    transition: 0.2s;
+    z-index: 1;
+}
+
+.menu li {
+    padding: 0.7em 0.5em;
+    margin: 0.3em 0;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+
+
+.menu li:hover{
+    background: #adadad;
+}
+
+.active{
+    background: #adadad;
+}
+
+.menu-open{
+    display: block;
+    opacity: 1;
+}
+
+/*.dropdown li {
+    display: block;
+    border-bottom: 1px solid #adadad;
+    text-align: center;
+    margin: 0;
+
+
+
+}
+
+ul li ul.dropdown{
+    display:none;
+    position: absolute;
+    z-index: 999;
+    margin-bottom: 20px;
+    padding: 0;
+
+   
+}
+
+ul li:hover ul.dropdown{
+    display: block;
+    
+}
+*/
+
+/* contact form */
+
+
+/* for the generate edt in option.html */
+
+/* drop down for ajouter supprimer*/
+
+.drop{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.course-info {
+    font-size: 0.8em;
+    text-align: left;
+}
+
+/* ajouter chef style*/
+
+.ajouter_chef{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.optionAS{
+    width: 200px;
+    height: 200px;
+    margin: 10px;
+    border: 1px solid rgb(44,44,44);
+}

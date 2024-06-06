@@ -1,0 +1,54 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Truculenta:opsz,wght@12..72,100..900&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <title>EDT</title>
+    <link rel="stylesheet" href="{% static 'style.css'%}">
+    <style>body{
+        font-family: Rubik;
+        background: linear-gradient(to top right, rgb(250,250,250), rgb(232,232,232));
+        overflow: hidden;
+        height: 100vh;
+    }
+        </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="" class="logo"><img src="{% static 'logo_base.png'%}" style="width: 300px;"></a>
+            <ul style="list-style-type: none;">
+                <li><a href="/" class="red">Home</a></li>
+                <li><a href="https://www.flopedt.org/" class="green">About</a></li>
+                <li><a href="contact" class="red">Contact Us</a></li>   
+            </ul>  
+        </nav>
+    </header>
+    <div class="login_form">
+        <h2 style="color: rgb(44,44,44);">Sign in</h2>
+        <form method=POST>
+            {% csrf_token %}
+            <div class="txt_field">
+                <input type="text" name="username" required>
+                <span></span>
+                <label>Username</label>
+            </div>
+            <div class="txt_field">
+                <input type="password" name="password" required>
+                <span></span>
+                <label>Password</label>
+            </div>
+            <a href="{% url 'password_reset' %}" style="text-decoration: none;"><div class="pass">Forgot Password?</div></a>
+            <a href=""><input type="submit" value="Login"></a>
+        </form>
+        {% if error_message %}
+        <h3 style="margin-top:20px; font-size: 12px; margin-left: 20%;">{{ error_message}}</h3>
+        {% endif %}
+    </div>
+</body>
+</html>

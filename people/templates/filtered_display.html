@@ -1,0 +1,107 @@
+{% extends 'base.html'%}
+{% csrf_token %}
+{% load custom_tags %}
+
+{%block content%}
+<h1>Filtered Timetable{% if week %} for Week {{ week }}{% endif %}</h1>
+    
+<!-- Filter Form -->
+<form method="get" action="{% url 'consulter' %}">
+    <div>
+        <label for="week">Week:</label>
+        <select name="week" id="week" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for i in 1|custom_range:53 %}
+                <option value="{{ i }}" {% if week == i|stringformat:'s' %}selected{% endif %}>{{ i }}</option>
+            {% endfor %}
+
+        </select>
+    </div>
+    
+    <div>
+        <label for="group">Group:</label>
+        <select name="group" id="group" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for group in groups %}
+                <option value="{{ group.id }}" {% if group.id|stringformat:'s' == request.GET.group %}selected{% endif %}>{{ group.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div>
+        <label for="training_program">Training Program:</label>
+        <select name="training_program" id="training_program" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for program in training_programs %}
+                <option value="{{ program.id }}" {% if program.id|stringformat:'s' == request.GET.training_program %}selected{% endif %}>{{ program.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div>
+        <label for="tutor">Tutor:</label>
+        <select name="tutor" id="tutor" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for tutor in tutors %}
+                <option value="{{ tutor.id }}" {% if tutor.id|stringformat:'s' == request.GET.tutor %}selected{% endif %}>{{ tutor.username }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div>
+        <label for="room">Room:</label>
+        <select name="room" id="room" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for room in rooms %}
+                <option value="{{ room.id }}" {% if room.id|stringformat:'s' == request.GET.room %}selected{% endif %}>{{ room.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div>
+        <label for="module">Module:</label>
+        <select name="module" id="module" onchange="this.form.submit()">
+            <option value="">All</option>
+            {% for module in modules %}
+                <option value="{{ module.id }}" {% if module.id|stringformat:'s' == request.GET.module %}selected{% endif %}>{{ module.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<!-- Timetable Display -->
+<table>
+    <thead>
+        <tr>
+            <th>Time</th>
+            {% for day in days %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for timeslot in timeslots %}
+    <tr>
+        <td>{{ timeslot.start_time }} - {{ timeslot.end_time }}</td>
+        {% for day in days %}
+            <td>
+                {% with timetable|get_item:day as day_schedule %}
+                    {% if day_schedule and day_schedule|get_item:timeslot %}
+                        <div class="course-info">
+                            <strong>{{ day_schedule|get_item:timeslot.course.module.name }}</strong><br>
+                            Group: {{ day_schedule|get_item:timeslot.course.group.name }}<br>
+                            Room: {{ day_schedule|get_item:timeslot.room.name }}<br>
+                            Tutor: {{ day_schedule|get_item:timeslot.course.tutor.username }}
+                        </div>
+                    {% else %}
+                        <div>Available</div>
+                    {% endif %}
+                {% endwith %}
+            </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+
+    </tbody>
+</table>
+{%endblock%}

@@ -1,0 +1,36 @@
+{% extends 'base:base.html'%}
+{% csrf_token %}
+
+{% block schedule%}
+
+    <div>
+        <table>
+            <thead>
+              <tr>
+                <th>Heurs</th>
+                <th>Lundi</th>
+                <th>Mardi</th>
+                <th>Mercredi</th>
+                <th>Jeudi</th>
+                <th>Vendredi</th>
+                <th>Samedi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamic rows will be inserted here -->
+              {% for time_range, days in timetable_items %}
+        <tr>
+            <td>{{ time_range }}</td>
+            <td>{{ days.mo|join:"<br>" }}</td>
+            <td>{{ days.tu|join:"<br>" }}</td>
+            <td>{{ days.we|join:"<br>" }}</td>
+            <td>{{ days.th|join:"<br>" }}</td>
+            <td>{{ days.fr|join:"<br>" }}</td>
+            <td>{{ days.sa|join:"<br>" }}</td>
+        </tr>
+        {% endfor %}
+            </tbody>
+          </table>
+
+</div>
+{% end block%}

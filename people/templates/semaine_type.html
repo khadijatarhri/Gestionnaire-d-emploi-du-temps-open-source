@@ -1,0 +1,31 @@
+{% extends 'base.html'%}
+{% csrf_token %}
+
+{%block content%}
+<h2>Entrez Preferences</h2>
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Time Slot</th>
+            {% for timeslot in timeslots %}
+                <th>{{ timeslot.day }} {{ timeslot.start_time }} - {{ timeslot.end_time }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>Vos preferences</td>
+            {% for timeslot in timeslots %}
+                <td>
+                    <select name="{{ timeslot.id }}">
+                        <option value="green" {% if timeslot.id in preferences and preferences.timeslot.id == "green" %}selected{% endif %}>Available</option>
+                        <option value="yellow" {% if timeslot.id in preferences and preferences.timeslot.id == "yellow" %}selected{% endif %}>Medium</option>
+                        <option value="red" {% if timeslot.id in preferences and preferences.timeslot.id == "red" %}selected{% endif %}>Not Available</option>
+                    </select>
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+    <button type="submit">Enregistrer</button>
+</form>
+
+{%endblock%}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'style.css'%}">
+
+
+<form method="post" novalidate class="contact_form">
+  {% csrf_token %}
+  <table cellpadding="10">
+    {{ form }}
+  </table>
+  <button type="submit">Envoyer</button>
+  <div> {{ ack }} </div>
+  <div> <br/><br/> </div>
+</form>
+
+{% endblock %}

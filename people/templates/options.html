@@ -1,0 +1,289 @@
+{% extends 'base.html'%}
+{% csrf_token %}
+
+{%block nav_items%}
+    <li><a href="{%url 'generer'%}" class="red" >Générer</a></li>
+    <li><a href="{%url 'ajouter'%}" class="green">Ajouter/Supprimer</a></li>
+{%endblock%}
+
+{%block content%}
+<style>
+    select{
+        width: 200px;
+        height: 35px;
+    }
+
+    .ajouter_chef {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.optionAS {
+    width: 40%;
+    margin: 25px;
+    height: auto;
+    padding: 20px;
+    border: 1px solid rgb(99, 97, 97);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.optionAS label,
+.optionAS input[type="text"],
+.optionAS input[type="submit"] {
+    display: inline-block;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.s {
+    color: rgb(254, 69, 69);
+    text-align: center;
+}
+
+.a {
+    color: rgb(98, 203, 82);
+    text-align: center;
+}
+
+.optionAS input[type="text"],
+.optionAS input[type="submit"] {
+    width: 75%;
+    margin-bottom: 10px;
+    height: 45px;
+}
+
+.optionAS input[type="radio"] {
+    display: inline;
+    margin: 6px;
+}
+
+.optionAS input[type="submit"] {
+    margin-top: 25px;
+}
+
+.optionAS select {
+    width: 100%;
+    height: 30px;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+}
+
+.optionAS input[type="text"] {
+    width: 100%;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+}
+
+.niveau {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sub-case {
+    flex: 1;
+    border: 1px solid rgb(99, 97, 97);
+    text-align: center;
+    padding: 5px;
+}
+
+.int{
+    font-size: 20px;
+}
+
+.submit_c {
+    text-align: center;
+}
+
+.error {
+    color: rgb(254, 69, 69);
+}
+
+.success {
+    color: rgb(98, 203, 82);
+}
+
+
+</style>
+    
+<div class="ajouter_chef">
+    <div id="gen_edt" class="optionAS"><br>
+        <h3 class="a">Générer EDT :</h3><br>
+        <form method="post" name="gen">
+            {% csrf_token %}
+            <label for="week">Semaine type</label>
+            <input type="text" name="week" required><br>
+            <label for="promo">Promotion</label>
+            <select id="promo" name="promo">
+                {% for program in training_programs %}
+                <option value="{{ program.id }}">{{ program.abbrev }}</option>
+                {% endfor %}
+            </select><br><br>
+            <div class="submit_c"><input type="submit" value="Générer Edt"></div>
+        </form>
+    </div>
+    <div id="apply_edt" class="optionAS">
+        <form method="post" name="app"><br>
+            <h3 class="s">Appliquer Edt sur :</h3><br>
+            <label for="week">Semaine type à appliquer</label>
+            <input type="text" name="week" required>
+            <label for="promo2">Promotion</label>
+            <select id="promo2" name="promo2">
+                {% for program in training_programs %}
+                <option value="{{ program.id }}">{{ program.abbrev }}</option>
+                {% endfor %}
+            </select>
+            <h4 style="font: bold; margin-top: 20px;">Appliquer l'edt sur les semaines :</h4><br>
+            <label for="starting_week">Semaine de début :</label>
+            <input type="text" name="starting_week" required>
+            <label for="ending_week">Semaine de fin (incluse) :</label>
+            <input type="text" name="ending_week" required>
+            <div class="submit_c"><input type="submit" value="Appliquer Edt"></div>
+        </form>
+    </div>
+</div>
+    <div id="preview">
+        <h2 style="text-align: center;">Emploi du temps résultant</h2><br>
+        <!-- code for displaying the schedule -->
+        <div >
+            <table>
+                <thead style="color: rgb(98, 203, 82);">
+                  <tr>
+                    <th>Heures</th>
+                    <th>Lundi</th>
+                    <th>Mardi</th>
+                    <th>Mercredi</th>
+                    <th>Jeudi</th>
+                    <th>Vendredi</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td style="color: rgb(254, 69, 69);">09:00 - 10:40</td>
+                    <td id="1 1" class="int">
+                        {% for schedule in schedules_9_m %}
+                        <div class="sub-case">{{ schedule.course.tutor.last_name }}-{{ schedule.course.group }}-{{ schedule.room }}-{{ schedule.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="1 2" class="int">
+                        {% for sch in schedules_9_tu %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="1 3" class="int">
+                        {% for sch in schedules_9_w %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="1 4" class="int">
+                        {% for sch in schedules_9_th %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="1 5" class="int">
+                        {% for sch in schedules_9_f %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: rgb(254, 69, 69);">11:00 - 12:40</td>
+                    <td id="2 1" class="int">
+                        {% for sch in schedules_11_m %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="2 2" class="int">
+                        {% for sch in schedules_11_tu %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="2 3" class="int">
+                        {% for sch in schedules_11_w %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="2 4" class="int">
+                        {% for sch in schedules_11_th %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="2 5" class="int">
+                        {% for sch in schedules_11_f %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: rgb(254, 69, 69);">14:00 - 15:40</td>
+                    <td id="3 1" class="int">
+                        {% for sch in schedules_14_m %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="3 2" class="int">
+                        {% for sch in schedules_14_tu %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="3 3" class="int">
+                        {% for sch in schedules_14_w %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="3 4" class="int">
+                        {% for sch in sschedules_14_th %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="3 5" class="int">
+                        {% for sch in schedules_14_f %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="color: rgb(254, 69, 69);">16:00 - 17:40</td>
+                    <td id="4 1" class="int">
+                        {% for sch in schedules_16_m %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="4 2" class="int">
+                        {% for sch in schedules_16_tu %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="4 3" class="int">
+                        {% for sch in schedules_16_w %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="4 4" class="int">
+                        {% for sch in schedules_16_th %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                    <td id="4 5" class="int">
+                        {% for sch in schedules_16_f %}
+                        <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                        {% endfor %}
+                    </td>
+                  </tr>
+                </tbody>
+
+            </table>
+        </div><br><br><br>
+<h3 ></h3>
+</div>
+{% endblock %}

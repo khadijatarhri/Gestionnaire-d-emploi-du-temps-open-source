@@ -1,0 +1,53 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emplois du temps</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Truculenta:opsz,wght@12..72,100..900&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'style.css'%}">
+    <style>body{
+        font-family: Rubik;
+        background: linear-gradient(to top right, rgb(250,250,250), rgb(232,232,232));
+        overflow: hidden;
+        height: 150vh;
+
+    }
+        </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <a href="" class="logo"><img src="{% static 'logo_base.png'%}" style="width: 300px;" id="logo_img"></a>
+            <ul style="list-style-type: none;">
+                <li><a href="/" class="red">Home</a></li>
+                <li><a href="https://www.flopedt.org/" class="green">About</a></li>
+                <li><a href="contact" class="red">Contact Us</a></li>   
+            </ul> 
+            <a href="{% url 'login'%}"><button type="button">Se connecter</button></a> 
+        </nav>
+    </header>
+    <div class="departement_choix">
+
+        <h3 style="font-weight: 400;">Veuillez choisir votre département :</h3>
+        <div class="departement">
+            <form action="{% url 'save_department' %}" method="post">
+                {% csrf_token %}
+                <a href=""><button id="gl" type="submit" value="gl">Génie Logiciel</button></a>
+                <a href=""><button type="submit" value="wme">Web and Mobile Engineering</button></a>
+                <a href=""><button type="submit" value="iad">Informatique  et Aide  à  la  Décision</button></a>
+                <a href=""><button type="submit" value="rc">Réseaux  de communications</button></a>
+                <a href=""><button type="submit" value="ise">Ingénierie  des  Systèmes   Embarqués</button></a>
+                <a href=""><button type="button" value="lc">Langues  et Communication</button></a>
+            </form>
+        </div>
+        
+
+    </div>
+</body>
+
+</html>

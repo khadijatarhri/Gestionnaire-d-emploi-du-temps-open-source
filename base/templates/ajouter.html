@@ -1,0 +1,146 @@
+{%extends 'base.html'%}
+{% load widget_tweaks%}
+{% block content%}
+
+
+
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 20px;
+            width: 20%;
+            height: 100px;
+        }
+        th.time {
+            width: 20%;
+        }
+        .cell {
+            background-color: rgb(98, 203, 82);
+            color: black;
+            cursor: pointer;
+        }
+        .unsure {
+            background-color: rgb(247, 247, 76);
+            color: black;
+        }
+        .unavailable {
+            background-color: rgb(254, 69, 69);
+            color: black;
+        }
+        .btn {
+            width: 75%;
+            height: 50px;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: rgb(44, 44, 44);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+
+    <form id="scheduleForm">
+        <table>
+            <thead>
+                <tr>
+                    <th class="time"><button type="button" class="btn" onclick="submitForm()">Valider</button></th>
+                    <th data-day="m">LUNDI</th>
+                    <th data-day="tu">MARDI</th>
+                    <th data-day="w">MERCREDI</th>
+                    <th data-day="th">JEUDI</th>
+                    <th data-day="f">VENDREDI</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="time">9:00 - 10:40</th>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="m">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="tu">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="w">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="th">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="f">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="sa">Disponible</td>
+
+                </tr>
+                <tr>
+                    <th class="time">11:00 - 12:40</th>
+                    <td class="unavailable" data-time="11:00 - 12:40" data-day="m">Indisponible</td>
+                    <td class="cell" data-time="11:00 - 12:40" data-day="tu">Disponible</td>
+                    <td class="unsure" data-time="11:00 - 12:40" data-day="w">Pas sûr</td>
+                    <td class="cell" data-time="11:00 - 12:40" data-day="th">Disponible</td>
+                    <td class="unavailable" data-time="11:00 - 12:40" data-day="f">Indisponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="sa">Disponible</td>
+                </tr>
+                <tr>
+                    <th class="time">14:00 - 15:40</th>
+                    <td class="cell" data-time="14:00 - 15:40" data-day="m">Disponible</td>
+                    <td class="unavailable" data-time="14:00 - 15:40" data-day="tu">Indisponible</td>
+                    <td class="cell" data-time="14:00 - 15:40" data-day="w">Disponible</td>
+                    <td class="unsure" data-time="14:00 - 15:40" data-day="th">Pas sûr</td>
+                    <td class="unsure" data-time="14:00 - 15:40" data-day="f">Pas sûr</td>
+                </tr>
+                <tr>
+                    <th class="time">16:00 - 17:40</th>
+                    <td class="unavailable" data-time="16:00 - 17:40" data-day="m">Indisponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="tu">Disponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="w">Disponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="th">Disponible</td>
+                    <td class="unavailable" data-time="16:00 - 17:40" data-day="f">Indisponible</td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <script>
+        document.querySelectorAll('.cell').forEach(cell => {
+    cell.addEventListener('click', () => {
+        if (cell.classList.contains('unavailable')) {
+            cell.dataset.status = 'unavailable';
+            cell.innerText = 'Indisponible';
+        } else if (cell.classList.contains('unsure')) {
+            cell.dataset.status = 'unsure';
+            cell.innerText = 'Pas sûr';
+        } else {
+            cell.dataset.status = 'disponible';
+            cell.innerText = 'Disponible';
+        }
+    });
+});
+
+
+        function submitForm() {
+            const data = Array.from(document.querySelectorAll('.cell')).map(cell => ({
+                time: cell.dataset.time,
+                day: cell.dataset.day,
+                status: cell.dataset.status
+            }));
+
+            fetch('/submit/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Table validated!');
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+
+
+
+{%endblock%}
