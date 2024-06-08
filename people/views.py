@@ -16,6 +16,14 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
+import json
+
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+import json
+
 #for the messagerie 
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -24,7 +32,7 @@ from .forms import ChangeCourseTimeForm, PreferenceForm
 from datetime import time
 
 from .models import Tutor
-from base.models import Module, TutorModule,TimeSlot,Schedule, TutorAvailability, Message, Day
+from base.models import Module, TutorModule,TimeSlot,Schedule, TutorAvailability, Day, Message, Room, Group
 
 # Create your views here.
 def login_page(request):
@@ -33,14 +41,14 @@ def login_page(request):
         department = request.session.get('selected_department')
         username = request.POST["username"]
         password = request.POST["password"]
-        user_chef = authenticate(request, username=username, password=password, is_admin=True, department = department)
-        user_prof = authenticate(request, username=username, password=password, is_admin=False, department = department)
-        if user_chef is not None:
-                login(request, user_chef)
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_admin == True :
+                login(request, user)
                 # Redirect to appropriate page after successful login
                 return redirect(reverse('chef'))
-        elif user_prof is not None:
-            login(request, user_prof)
+            elif user.is_admin == False:
+                login(request, user)
             return redirect(reverse('prof'))
         else:
             error_message = "Invalid username or password."
@@ -54,7 +62,7 @@ def chef_interface(request):
 
 @login_required
 def prof_interface(request):
-    return render(request, 'prof.html')
+    return render(request, 'Prof.html')
 
 
 def logout_page (request):
@@ -126,7 +134,8 @@ def ajouter_prof(request):
         email = request.POST['email']
         department = request.POST['selected-option_d_ap']
 
-        tutor = Tutor(username=username, email=email, password='pwd', department=department)
+        tutor = Tutor.objects.create(username=username, email=email, department=department)
+        tutor.set_password('pwd')
         try:
             tutor.save()
             success_message = 'Professeur créé avec succès'
@@ -204,7 +213,7 @@ def semaine_type(request):
     return render(request, 'semaine_type.html', {'timeslots': timeslots, 'preferences': preferences})
 
 @login_required
-def modify(request):
+def modify(request): #hadi modifier
     courses = Schedule.objects.filter(course__tutor=request.user)
     if request.method == 'POST':
         current_timeslot_id = request.POST.get('current_timeslot')
@@ -338,3 +347,156 @@ def submit_availability(request):
 
     return redirect('ajout')
 
+
+# forgot password
+
+def password_change (request):
+    return render(request, 'forgot_password.html')
+
+
+#modifier
+
+def modifier_view(request):
+    training_program = TrainingProgramme.objects.all()
+    tutors = Tutor.objects.all()
+    groups = Group.objects.all()
+    modules = Module.objects.all()
+    rooms = Room.objects.all()
+    weeks = [i for i in range (1,53)]
+    schedules = Schedule.objects.all()
+
+    week = request.GET.get('week')
+    if week:
+        schedules = schedules.filter(week=week)
+    schedules_9_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(9,0))
+    schedules_11_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(11,0))
+    schedules_14_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(14,0))
+    schedules_16_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(16,0))
+    schedules_9_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(9,0))
+    schedules_11_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(11,0))
+    schedules_14_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(14,0))
+    schedules_16_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(16,0))
+    schedules_9_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(9,0))
+    schedules_11_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(11,0))
+    schedules_14_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(14,0))
+    schedules_16_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(16,0))
+    schedules_9_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(9,0))
+    schedules_11_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(11,0))
+    schedules_14_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(14,0))
+    schedules_16_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(16,0))
+    schedules_9_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(9,0))
+    schedules_11_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(11,0))
+    schedules_14_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(14,0))
+    schedules_16_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(16,0))
+    context= {'schedules_9_m': schedules_9_m,'schedules_11_m': schedules_11_m, 'schedules_14_m': schedules_14_m,'schedules_16_m': schedules_16_m,
+                                            'schedules_9_tu': schedules_9_tu,'schedules_11_tu': schedules_11_tu, 'schedules_14_tu': schedules_14_tu,'schedules_16_tu': schedules_16_tu,
+                                            'schedules_9_w': schedules_9_w,'schedules_11_w': schedules_11_w, 'schedules_14_w': schedules_14_w,'schedules_16_w': schedules_16_w,
+                                            'schedules_9_th': schedules_9_th,'schedules_11_th': schedules_11_th, 'schedules_14_th': schedules_14_th,'schedules_16_th': schedules_16_th,
+                                            'schedules_9_f': schedules_9_f,'schedules_11_f': schedules_11_f, 'schedules_14_f': schedules_14_f,'schedules_16_f': schedules_16_f}
+    return render(request, 'consulter.html', context)
+
+#3 try for the message notificationn
+
+@login_required
+def notifications(request):
+    messages = Message.objects.filter(receiver=request.user)
+    return render(request, 'notifications.html', {'messages': messages})
+
+@login_required
+def mark_as_read(request, message_id):
+    message = get_object_or_404(Message, id=message_id, receiver=request.user)
+    message.is_read = True
+    message.save()
+    return redirect('notifications')
+
+@login_required
+def check_new_messages(request):
+    new_messages = Message.objects.filter(receiver=request.user, is_read=False).exists()
+    return JsonResponse({'new_messages': new_messages})
+
+def confirm_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, receiver=request.user)
+    if request.method == 'POST':
+        message.is_read = True
+        message.is_confirmation = True
+        message.save()
+        # Create a confirmation message
+        Message.objects.create(
+            sender=request.user,
+            receiver=message.sender,
+            body=f"Votre demande :'{message.body}' a été confirmée.",
+            is_read=False,
+            related_course=message.related_course,
+        )
+        # Swap time slots
+        if message.schedule_sender and message.schedule_receiver:
+            message.schedule_receiver.time_slot, message.schedule_sender.time_slot = (
+                message.schedule_sender.time_slot, 
+                message.schedule_receiver.time_slot
+            )
+            message.schedule_receiver.save()
+            message.schedule_sender.save()
+
+        return JsonResponse({"status": "confirmed"})
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@login_required
+def decline_message(request, message_id):
+    message = get_object_or_404(Message, id=message_id, receiver=request.user)
+    if request.method == 'POST':
+        message.is_read = True
+        message.is_confirmation = False
+        message.save()
+        # Create a decline message
+        Message.objects.create(
+            sender=request.user,
+            receiver=message.sender,
+            body=f"Votre demande :'{message.body}' a été refusée.",
+            is_read=False,
+            related_course=message.related_course,
+        )
+        return JsonResponse({"status": "declined"})
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+
+#decaler 
+def load_courses(request):
+    week = request.GET.get('week')
+    courses = []
+    message = ""
+    if week:
+        try:
+            schedules = Schedule.objects.filter(week=week, course__tutor=request.user)
+            courses = [{'schedule': {
+                'id': schedule.id,
+                'course': {
+                    'module': {'name': schedule.course.module.name},
+                    'group': schedule.course.group.name
+                },
+                'time_slot': str(schedule.time_slot)
+            }} for schedule in schedules]
+        except Schedule.DoesNotExist:
+            message = "La semaine sélectionnée n'existe pas."
+    return JsonResponse({'courses': courses, 'message': message}, safe=False)
+
+def select_week_and_course(request):
+    message = ""
+    if request.method == 'POST':
+        schedule_id = request.POST.get('course')
+        target = request.POST.get('s1')
+        try:
+            schedule = Schedule.objects.get(pk=schedule_id)
+            schedule.week = target
+            schedule.save()
+            Message.objects.create(
+                sender=request.user,
+                receiver=Tutor.objects.get(is_admin=True, training_program=schedule.training_program),
+                subject='De {}, Décalage de cours :'.format(request.user),
+                body='Décalage du cours {} du group {} le {}, de la semaine : {} à la semaine {} pour le professeur : {}'.format(
+                    schedule.course.module.name, schedule.course.group, schedule.time_slot.__str__(), schedule.week, target, schedule.course.tutor)
+            )
+            message = 'Cours décalé avec succès'
+        except Schedule.DoesNotExist:
+            message = "L'horaire sélectionné n'existe pas."
+    return render(request, 'decaler.html', {'message': message})

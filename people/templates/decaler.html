@@ -1,0 +1,136 @@
+{%extends 'base.html'%}
+{% block content %}
+{% load static %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+  .AS input[type="submit"] {
+    margin-top: 25px;
+}
+select{
+        
+        width: 170px;
+        height: 30px;
+        margin-bottom: 15px;
+    }
+
+.AS input[type="text"] input[type="textarea"] {
+    width: 150%;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+
+}
+
+
+
+.AS input[type="text"]{
+  width: 300px;
+  height: 35px;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.AS input[type="textarea"]{
+  font-size: 16px;
+  width: 300px;
+  height: 200px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+
+
+#apply_edt{
+
+  width: 40%;
+  height: auto;
+  border-radius: 15px;
+  padding: 30px;
+  display: inline-block;
+  justify-content: center;
+  border: 1.5px rgb(44,44,44) solid;
+  margin-left: 30%;
+}
+.s {
+    color: rgb(254, 69, 69);
+    text-align: center;
+}
+.dvi{
+
+  justify-content: center;
+}
+
+
+</style>
+
+<div id="apply_edt" class="AS dvi">
+    <h2 class="s">Décaler le cours :</h2><br>
+    <form id="weekForm" method="get">
+        {% csrf_token %}
+        <label for="s2">De la semaine :</label><br>
+        <input type="text" name="s2" id="s2" required><br>
+        <button type="submit">Chercher</button><br><br>
+    </form>
+    <form id="courseForm" method="post" action="{% url 'select_week_and_course' %}">
+        {% csrf_token %}
+        <input type="hidden" name="week" id="hiddenWeek">
+        <label for="course">Cours:</label>
+        <select name="course" id="course" required class="multiple-select">
+            <option value="">Selectionner un cours</option>
+        </select>
+        <br>
+        <label for="s1">Vers la semaine :</label><br>
+        <input type="text" name="s1" required><br>
+        <button type="submit">Décaler</button>
+    </form>
+    <br>
+    {% if message is not None %}
+    <h4>{{ message }}</h4>
+    {% endif %}
+</div>
+<br><br><br>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#weekForm').submit(function(event) {
+            event.preventDefault();
+            var week = $('#s2').val();
+            if (week) {
+                $.ajax({
+                    url: '{% url "load_courses" %}',
+                    data: {
+                        'week': week
+                    },
+                    success: function(response) {
+                        var data = response.courses;
+                        $('#course').empty();
+                        $('#course').append('<option value="">Selectionner un cours</option>');
+                        $.each(data, function(key, value) {
+                            $('#course').append('<option value="' + value.schedule.id + '">' + value.schedule.course.module.name + ' : ' + value.schedule.course.group + ' : ' + value.schedule.time_slot + '</option>');
+                        });
+                        // Set the hidden input value for the week
+                        $('#hiddenWeek').val(week);
+                        if (response.message) {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#courseForm').submit(function(event) {
+            var week = $('#hiddenWeek').val();
+            if (!week) {
+                alert('Please enter a week first.');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

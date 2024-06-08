@@ -1,0 +1,151 @@
+{% extends 'base.html'%}
+{% csrf_token %}
+
+{%block content%}
+    <h2 style="margin-left: 25px;">Bienvenue {{request.user.last_name}}</h2><br>
+    <div><table>
+        <thead>
+          <tr>
+            <th>Heures</th>
+            <th>Lundi</th>
+            <th>Mardi</th>
+            <th>Mercredi</th>
+            <th>Jeudi</th>
+            <th>Vendredi</th>
+            <th>Samedi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>09:00 - 10:40</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>11:00 - 12:40</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>14:00 - 15:40</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>16:00 - 17:40</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+     
+    
+        </tbody>
+        </table>
+    </div>
+
+    <script>
+        function displayNewMessages(messages) {
+            var popup = document.getElementById("popup");
+            var popupContent = document.getElementById("popup-content");
+        
+            // Clear previous content
+            popupContent.innerHTML = "";
+        
+            messages.forEach(function(message) {
+                var listItem = document.createElement("li");
+                listItem.innerHTML = `
+                    <strong>From:</strong> ${message.sender}<br>
+                    <strong>Subject:</strong> ${message.subject}<br>
+                    <strong>Body:</strong> ${message.body}<br>
+                `;
+        
+                if (message.requires_response) {
+                    var confirmButton = document.createElement("button");
+                    confirmButton.textContent = "Confirm";
+                    confirmButton.onclick = function() {
+                        confirmMessage(message.id);
+                    };
+        
+                    var declineButton = document.createElement("button");
+                    declineButton.textContent = "Decline";
+                    declineButton.onclick = function() {
+                        declineMessage(message.id);
+                    };
+        
+                    listItem.appendChild(confirmButton);
+                    listItem.appendChild(declineButton);
+                }
+        
+                popupContent.appendChild(listItem);
+            });
+        
+            // Show the popup
+            popup.style.display = "block";
+        }
+        
+        function checkForNewRecord() {
+            setInterval(function() {
+                // Make AJAX request to Django endpoint
+                $.ajax({
+                    url: '/check-new-unread-messages/',
+                    method: 'GET',
+                    success: function(response) {
+                        if (response.newUnreadMessages && response.newUnreadMessages.length > 0) {
+                            console.log("New messages found: ", response.newUnreadMessages);
+                            displayNewMessages(response.newUnreadMessages);
+                        } else {
+                            console.log("No new messages.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error checking messages:", error);
+                    }
+                });
+            }, 180000); // Check every 3 minutes (180,000 ms)
+        }
+        
+        
+        checkForNewRecord();
+        
+        
+        function handleConfirmation(messageId, action) {
+            var url = action === 'confirm' ? `/confirm-message/${messageId}/` : `/decline-message/${messageId}/`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "confirmed" || data.status === "declined") {
+                        // Optionally, hide the popup or update the UI
+                        document.getElementById("popup").style.display = "none";
+                    } else {
+                        console.log("Failed to update message status.");
+                    }
+                })
+                .catch(error => console.error('Error confirming message:', error));
+        }
+        
+        function confirmMessage(messageId) {
+            handleConfirmation(messageId, 'confirm');
+        }
+        
+        function declineMessage(messageId) {
+            handleConfirmation(messageId, 'decline');
+        }
+        </script>
+{%endblock%}
