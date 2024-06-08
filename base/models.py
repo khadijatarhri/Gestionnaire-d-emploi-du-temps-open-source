@@ -124,9 +124,12 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     related_course = models.ForeignKey(Schedule, null=True, blank=True, on_delete=models.SET_NULL)
+    requires_response = models.BooleanField(default=False) 
     is_confirmation = models.BooleanField(default=False)
     confirmation_link = models.CharField(max_length=255, null=True, blank=True)
     decline_link = models.CharField(max_length=255, null=True, blank=True)
+    schedule_sender = models.ForeignKey(Schedule, related_name='sender', on_delete=models.CASCADE, null=True, blank=True)
+    schedule_receiver = models.ForeignKey(Schedule,related_name='receiver', on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
         return self.subject

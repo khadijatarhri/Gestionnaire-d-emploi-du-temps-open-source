@@ -3,16 +3,96 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'style.css'%}">
+<style>
+  .AS input[type="submit"] {
+    margin-top: 25px;
+}
+
+.AS input[type="text"] input[type="textarea"] {
+    width: 150%;
+    outline: none;
+    font-size: 15px;
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+
+}
+
+textarea{
+  width: 150%;
+    outline: none;
+    
+    border-radius: 5px;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+    font-size: 16px;
+  width: 300px;
+  height: 200px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.AS input[type="text"]{
+  width: 300px;
+  height: 35px;
+  font-size: 16px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.AS input[type="textarea"]{
+  font-size: 16px;
+  width: 300px;
+  height: 200px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 
 
-<form method="post" novalidate class="contact_form">
-  {% csrf_token %}
-  <table cellpadding="10">
-    {{ form }}
-  </table>
-  <button type="submit">Envoyer</button>
-  <div> {{ ack }} </div>
-  <div> <br/><br/> </div>
-</form>
 
+#apply_edt{
+
+  width: 40%;
+  height: auto;
+  border-radius: 15px;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  border: 1.5px rgb(44,44,44) solid;
+}
+.s {
+    color: rgb(254, 69, 69);
+    text-align: center;
+}
+.divi{
+  display: flex;
+  justify-content: center;
+}
+
+
+</style>
+<div class="divi">
+<div id="apply_edt" class="AS">
+  <form method="POST" action="{%url 'sendcontact'%}">
+      {%csrf_token%}
+      <h2 class="s">Contacter :</h2><br>
+      <label for="email">Email :</label><br>
+      <input type="text" name="email" required><br>
+      <label for="email">Object :</label><br>
+      <input type="text" name="object" required><br>
+      
+
+      <label for="sujet">Contenu :</label><br>
+      <textarea name="sujet" required></textarea><br>
+
+      <div class="submit_c"><input type="submit" value="Envoyer"></div><br>
+      {% if message is not None %}
+      <h4 style="text-align: center;">{{ message }}</h4>
+      {% endif %}
+  </form>
+     <br><br><br><h1></h1> 
+</div>
+
+<br><br><br><h1></h1> 
+</div>
 {% endblock %}

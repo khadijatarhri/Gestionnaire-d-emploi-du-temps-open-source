@@ -9,12 +9,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Truculenta:opsz,wght@12..72,100..900&display=swap" rel="stylesheet">
     <title>Emplois du temps</title>
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>body{
         font-family: Rubik;
         background: linear-gradient(to top right, rgb(250,250,250), rgb(232,232,232));
         height: auto;
         
     }
+    #popup {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 300px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#popup-content li {
+    margin-bottom: 10px;
+}
 
       table {
         height: 350px;
@@ -39,6 +55,31 @@
         color: rgb(254, 69, 69); /* Couleur rouge */
         text-align: center; /* Centrage horizontal */
       }
+
+      .notification-popup {
+        height: auto;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: rgb(165, 169, 164);
+            color: rgb(0, 0, 0);
+            padding: 10px;
+            border: 1px solid rgb(81, 87, 80);
+            display: none;
+            border-radius: 10px;
+        }
+        .notification-popup .close-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            float: right;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style-type: none; /* Remove default ul decoration */
+            padding: 0;
+        }
     </style>
 
 
@@ -48,18 +89,19 @@
 <body>
     <header class="header">
         <nav class="navbar">
-            <a href="{%url 'ajout'%}" class="logo"><img src="{% static 'logo1.png'%}" id="logo_img" style="width: 200px; margin-top: 10px;"></a>
+            <a href="{{ request.META.HTTP_REFERER }}" class="logo"><img src="{% static 'logo1.png'%}" id="logo_img" style="width: 200px; margin-top: 10px;"></a>
             <ul style="list-style-type: none;font-size: 16px;">
-                <li><a href="{%url 'consulter'%}" class="red">Consulter</a></li>
+                <li><a href="{%url 'consulter'%}" class="green">Consulter</a></li>
                 <li><a href="{%url 'modify'%}" class="red" >Modifier</a></li>
 
                 <li><a href="{%url 'ajout'%}" class="green">Semaine Type</a></li>
-                <li><a href="decaler_annuler" class="red">Décaler/Annuler</a></li>
+                <li><a href="{%url 'select_week_and_course'%}" class="red">Décaler/Annuler</a></li>
                 {%block nav_items%}{% endblock%}
 
                 <li><a href="ical" class="red">iCal</a></li>
                 <li><a href="{%url 'aide' %}" class="green">Aide</a></li>
                 <li><a href="{%url 'contact' %}" class="red">Contact</a></li>
+                <li><a href="{%url 'notifications'%}" class="green">Messagerie</a></li>
 
             </ul>
             {% if user.is_authenticated %}
@@ -69,8 +111,72 @@
             {% endif %} 
         </nav>
     </header>
+    <div class="notification-popup"><button class="close-btn">&times;</button>Nouveau message, cliquez pour voir.</div>
     <div >{% block content%}{% endblock%}</div>
     <div >{% block schedule%}{% endblock%}</div>
+    
+
+
+
+
+<script>
+    $(document).ready(function() {
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            const csrftoken = getCookie('csrftoken');
+
+            function checkNewMessages() {
+                $.get("{% url 'check_new_messages' %}", function(data) {
+                    if (data.new_messages) {
+                        $('.notification-popup').show();
+                    }
+                });
+            }
+
+            setInterval(checkNewMessages, 5000); // Check for new messages every 3 minutes
+
+            $('.notification-popup .close-btn').click(function(event) {
+                event.stopPropagation();
+                $('.notification-popup').hide();
+            });
+
+            $('.notification-popup').click(function() {
+                window.location.href = "{% url 'notifications' %}";
+            });
+
+            $('form').submit(function(event) {
+            event.preventDefault();
+            var $form = $(this);
+            var $buttons = $form.find('button');
+            $buttons.prop('disabled', true); // Disable the buttons
+
+            var actionUrl = $form.attr('action');
+            $.post(actionUrl, $form.serialize(), function(response) {
+                if (response.status === 'confirmed' || response.status === 'declined') {
+                    $form.closest('.message').addClass('read').remove();
+                } else {
+                    $buttons.prop('disabled', false); // Re-enable the buttons if an error occurs
+                }
+            }).fail(function() {
+                $buttons.prop('disabled', false); // Re-enable the buttons if an error occurs
+            });
+        });
+        });
+</script>
 
 </body>
 </html>
