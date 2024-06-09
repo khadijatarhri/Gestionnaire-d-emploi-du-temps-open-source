@@ -43,7 +43,11 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     'people.apps.PeopleConfig',
     'widget_tweaks',
+
 ]
+
+ASGI_APPLICATION = 'website.asgi.application'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -85,7 +89,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'flopedt1',
         'USER': 'root',
-        'PASSWORD': 'c',
+        'PASSWORD': 'Ifjkz1601@',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -127,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -137,11 +141,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / 'base' / 'static',  
 ]
-
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'flopedt9@gmail.com'
-EMAIL_HOST_PASSWORD = 'c'
+EMAIL_HOST_USER = 'rajatchorouk@outlook.fr'
+EMAIL_HOST_PASSWORD = 'Ifjkz1601'
+
+
