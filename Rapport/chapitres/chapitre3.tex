@@ -1,0 +1,167 @@
+\chapter{Réalisation et mise en oeuvre}
+\label{chap:Réalisation et mise en oeuvre}
+Ce chapitre traite de la mise en œuvre et de la réalisation, en présentant les outils utilisés et le travail accompli.
+\newpage
+\section{Outils de développement}
+\subsection{Langages de programmation et développement}
+\subsubsection*{Python}
+Python est un langage de programmation interprété, orienté objet, et de haut niveau avec une syntaxe simple et lisible. Il est largement utilisé pour le développement web, l'analyse de données, l'intelligence artificielle, et bien plus. Sa vaste bibliothèque standard et son écosystème riche en font un choix populaire parmi les développeurs.\\
+Grâce à la bibliothèque  OptaPlanner, nous avons résolu efficacement les problèmes de contraintes. Son approche basée sur l'optimisation a permis de modéliser les contraintes liées à l'emploi du temps, aboutissant à des solutions optimisées qui répondent aux besoins et contraintes des professeurs.
+\begin{figure}[h]
+      \centering
+        \includegraphics[width=5cm,height=5cm]{Logos/python.png}
+        \caption{Logo de Python}
+\end{figure}
+\newpage
+\subsubsection*{JavaScript}
+JavaScript est un langage de programmation de scripts, principalement utilisé pour créer et contrôler le contenu dynamique des pages web. Il permet d'ajouter des fonctionnalités interactives aux sites web, comme des animations, des formulaires dynamiques, et des mises à jour en temps réel.\\ % JavaScript est un langage côté client, mais il peut également être utilisé côté serveur grâce à des environnements comme Node.js.\\
+
+\begin{figure}[h]
+      \centering
+        \includegraphics[width=4cm,height=4cm]{Logos/jslogo.png}
+        \caption{Logo de JavaScript}
+\end{figure}
+
+\subsubsection*{HTML/CSS}
+HTML (HyperText Markup Language) est le langage standard utilisé pour structurer et présenter le contenu sur le web, définissant les éléments tels que les titres, les paragraphes et les images. \\
+CSS (Cascading Style Sheets) est utilisé pour contrôler la présentation, la mise en forme et la disposition des éléments HTML, permettant de séparer le contenu de son style visuel.\\
+\begin{figure}[h]
+      \centering
+        \includegraphics[width=7cm,height=5cm]{Logos/htmletcss.png}
+        \caption{Logo de HTML et CSS}
+\end{figure}
+
+\newpage
+\subsection{Environement de développement}
+\subsubsection*{Django}
+Django est un framework web de haut niveau pour le langage de programmation Python, conçu pour faciliter le développement rapide et pragmatique de sites web sécurisés et maintenables. Il fournit un ensemble complet d'outils et de bibliothèques, incluant une interface d'administration automatique, et des mécanismes de sécurité intégrés. Django encourage une architecture propre et modulaire, favorisant la réutilisation du code et la séparation des préoccupations. \\
+Grâce à cet outil, nous avons pu développer notre projet.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=7cm,height=3.5cm]{Logos/djangologo.png}
+        \caption{Logo de Django}
+\end{figure}
+
+\subsubsection*{Visual Studio Code}
+Visual Studio est un environnement de développement intégré (IDE) développé par Microsoft, offrant une suite d'outils complète pour la création d'applications logicielles pour diverses plateformes telles que Windows, Android, iOS et le Web. Il prend en charge une variété de langages de programmation, y compris Python et JavaScript , facilitant ainsi le développement, le débogage et le déploiement des projets logiciels.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=6cm,height=4cm]{Logos/logoVisualStudio.png}
+        \caption{Logo de Visual Studio Code}
+\end{figure}
+
+\subsubsection*{MySQL}
+MySQL est un système de gestion de bases de données relationnelles open-source, développé par Oracle Corporation. Utilisant le langage SQL (Structured Query Language) pour interroger et manipuler les données.\\
+Nous avons opté pour MySQL en raison de sa performance, de sa fiabilité et de sa facilité d'utilisation.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=6cm,height=5cm]{Logos/MysqlLogo.png}
+        \caption{Logo de MySQL}
+\end{figure}
+\subsubsection*{GitHub}
+GitHub est une plateforme de développement collaboratif utilisée dans notre environnement de développement pour stocker, gérer et suivre les versions du code source de notre projet. Elle repose sur le système de contrôle de version Git et facilite la collaboration entre développeurs grâce à des fonctionnalités telles que les dépôts (repositories), les issues (problèmes), les pull requests (demandes de tirage), et la gestion de projets.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=6cm,height=4cm]{Logos/github.png}
+        \caption{Logo de GitHub}
+\end{figure}
+\newpage
+\newpage
+\section{Réalisation}
+\subsection*{S'authentifier:}
+Les professeurs peuvent s'authentifier grâce à leur nom et au mot de passe "passe". Le chef de filière peut également se connecter en utilisant le même mot de passe et le nom d'utilisateur "Chef".\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=12cm]{Logos/WhatsApp Image 2024-06-06 at 00.50.55.jpeg}
+        \caption{Interface : login}
+\end{figure}
+\newpage
+\subsection*{Changer le mot de passe:}
+Dans le cas où l'utilisateur aurait oublié son mot de passe, il peut le changer via cette interface.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=10cm]{Logos/19.jpeg}
+        \caption{Interface : Changer mot de passe}
+\end{figure}
+\newpage
+
+\subsection*{Sélection du Département:}
+Cette interface, qui apparaît après la page de connexion, permet à l'utilisateur de sélectionner son département.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=12cm]{Logos/3.jpeg}
+        \caption{Interface : Sélection du Département}
+\end{figure}
+\newpage
+\subsection*{Semaine type:}
+Si l'utilisateur est un professeur, il peut accéder à l'interface "semaine type" pour choisir ses préférences, c'est-à-dire les heures où il est disponible et celles où il ne l'est pas.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=14cm]{Logos/2.jpeg}
+        \caption{Interface : Semaine type}
+\end{figure}
+\newpage
+
+\subsection*{Ajouter/supprimer un prof ou un module}
+Le chef de filière peut ajouter ou supprimer un module ou un professeur de la base de données en remplissant les champs nécessaires.
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=17cm,height=12cm]{Logos/4.jpeg}
+        \includegraphics[width=17cm,height=7cm]{Logos/6.jpeg}
+        \caption{Interface : Ajouter/supprimer un prof ou un module}
+\end{figure}
+\newpage
+\subsection*{Consulter:}
+L'utilisateur peut consulter un emploi du temps via cette interface , en spécifiant le critère selon lequel l'emploi du temps sera affiché.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=17cm,height=12cm]{Logos/17.jpeg}
+        \caption{Interface : Consulter}
+\end{figure}
+\newpage
+\subsection*{Créer semaine type:}
+Le chef de filière peut créer une nouvelle semaine type via cette interface.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=15cm,height=11cm]{Logos/22.png}
+        \caption{Interface : Créer semaine type}
+\end{figure}
+\newpage
+\subsection*{Générer un Emploi :}
+Le chef de filière peut générer l’emploi du temps via cette interface.
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=10cm]{Logos/7.jpeg}
+        \includegraphics[width=19cm,height=10cm]{Logos/13.jpeg}
+        \caption{Interface : Générer un Emploi}
+\end{figure}
+
+\newpage
+\subsection*{Modifier l’horaire d’une séance:}
+Le professeur peut demander à modifier l'horaire de sa séance avec un autre professeur en cliquant sur le bouton de messagerie pour lui adresser cette demande.
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=9cm]{Logos/15.jpeg}
+        \caption{Interface :Modifier l’horaire d’une séance}
+        \vspace{0.4cm}
+        \includegraphics[width=19cm,height=9cm]{Logos/16.jpeg}
+
+        \caption{Interface : Messagerie}
+\end{figure}
+\newpage
+\subsection*{Décaler le cours:}
+Le professeur peut déplacer son cours d'une semaine à l'autre via cette interface\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=14cm]{Logos/14.jpeg}
+        \caption{Interface : Décaler le cours}
+\end{figure}
+\newpage
+\subsection*{Contacter:}
+Les professeurs peuvent communiquer entre eux en envoyant des messages et recevoir des notifications pour les messages qu'ils ont reçus.\\
+\begin{figure}[H]
+      \centering
+        \includegraphics[width=19cm,height=12cm]{Logos/18.jpeg}
+        \caption{Interface : Décaler le cours}
+\end{figure}
+\newpage
