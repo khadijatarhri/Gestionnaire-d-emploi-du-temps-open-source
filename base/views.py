@@ -3,21 +3,30 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from django.template.response import TemplateResponse
 from django.core.mail import send_mail
-from people.models import Tutor, TrainingProgramme, Department 
+from people.models import Tutor, TrainingProgramme, Department
 from django.core.exceptions import ObjectDoesNotExist
 from base.forms import ContactForm
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Message
+from django.utils.dateparse import parse_time
+import json
 
-import logging
+from django.http import JsonResponse, HttpResponseNotAllowed
 
+
+from datetime import time
+
+import logging, json
 # Create a logger
 logger = logging.getLogger(__name__)
 
 
 #imports for optapy
-from .models import TutorModule, TimeSlot, Room, Schedule, TutorAvailability, Holiday, Group, Course, Day, Module
+from .models import TutorModule, TimeSlot, Room, Schedule, TutorAvailability, Holiday, Group, Course, Day, Module,Message
 from .domain import DomainRoom, DomainTimeslot, Lesson, TimeTable, DomainTeacherAvailability, DomainHoliday, generate_problem
 
 from people.models import TrainingProgramme
@@ -198,67 +207,319 @@ def apply_schedule_to_weeks(request, training_program_id, schedule_week, startin
         
         for entry in schedule_entries:
             # Create a new schedule entry for the target week
-            Schedule.objects.create(
-                course=entry.course,
-                time_slot=entry.time_slot,
-                room=entry.room,
-                week=week,
-                training_program=training_program_id
-            )
-
+            schedule = Schedule.objects.create()
+            schedule.course.module = entry.course.module
+            schedule.course.tutor = entry.course.tutor
+            schedule.time_slot = entry.time_slot
+            schedule.room = entry.room
+            schedule.training_program = entry.training_program
+            schedule.week = entry.week
+            schedule.save()
+    message= 'EDT appliqué au semaine données'
+    return render(request, 'options.html', {'message1': message})
 
 # filter view 
 
 @login_required
 def filter_display(request):
+    training_program = TrainingProgramme.objects.all()
+    tutors = Tutor.objects.all()
+    groups = Group.objects.all()
+    modules = Module.objects.all()
+    rooms = Room.objects.all()
+    weeks = [i for i in range (1,53)]
+    schedules = Schedule.objects.all()
+
     week = request.GET.get('week')
-    group = request.GET.get('group')
-    training_program = request.GET.get('training_program')
-    tutor = request.GET.get('tutor')
-    room = request.GET.get('room')
-    module = request.GET.get('module')
+    group = request.GET.getlist('group')
+    training_program = request.GET.getlist('training_program')
+    tutor = request.GET.getlist('tutor')
+    room = request.GET.getlist('room')
+    module = request.GET.getlist('module')
     
     # Base queryset for schedules
-    schedules = Schedule.objects.all()
+        
 
     # Apply filters if parameters are provided
     if week:
         schedules = schedules.filter(week=week)
-    if group:
-        schedules = schedules.filter(course__group=group)
-    if training_program:
-        schedules = schedules.filter(course__training_program=training_program)
+    if group :
+        schedules = schedules.filter(course__group__in=group)
+    if training_program :
+        schedules = schedules.filter(course__group__training_program__in=training_program)
     if tutor:
-        schedules = schedules.filter(course__tutor=tutor)
+        schedules = schedules.filter(course__tutor__in=tutor)
     if room:
-        schedules = schedules.filter(room=room)
+        schedules = schedules.filter(room__in=room)
     if module:
-        schedules = schedules.filter(course__module=module)
-    
-    # Fetch all unique timeslots and days
-    timeslots = TimeSlot.objects.all().order_by('start_time')
-    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        schedules = schedules.filter(course__module__in=module)
 
-    # Organize schedule entries into a dictionary keyed by day and timeslot
-    timetable = {day: {timeslot: None for timeslot in timeslots} for day in days}
-    for entry in schedules:
-        day = entry.time_slot.day
-        timeslot = entry.time_slot
-        timetable[day][timeslot] = entry
-
-    context = {
-        'timetable': timetable,
-        'timeslots': timeslots,
-        'days': days,
-        'week': week,
-        'groups': Group.objects.all(),
-        'training_programs': TrainingProgramme.objects.all(),
-        'tutors': Tutor.objects.all(),
-        'rooms': Room.objects.all(),
-        'modules': Module.objects.all(),
-    }
-
+        
+    schedules_9_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(9,0))
+    schedules_11_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(11,0))
+    schedules_14_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(14,0))
+    schedules_16_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(16,0))
+    schedules_9_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(9,0))
+    schedules_11_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(11,0))
+    schedules_14_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(14,0))
+    schedules_16_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(16,0))
+    schedules_9_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(9,0))
+    schedules_11_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(11,0))
+    schedules_14_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(14,0))
+    schedules_16_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(16,0))
+    schedules_9_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(9,0))
+    schedules_11_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(11,0))
+    schedules_14_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(14,0))
+    schedules_16_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(16,0))
+    schedules_9_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(9,0))
+    schedules_11_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(11,0))
+    schedules_14_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(14,0))
+    schedules_16_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(16,0))
+    context= {'schedules_9_m': schedules_9_m,'schedules_11_m': schedules_11_m, 'schedules_14_m': schedules_14_m,'schedules_16_m': schedules_16_m,
+                                            'schedules_9_tu': schedules_9_tu,'schedules_11_tu': schedules_11_tu, 'schedules_14_tu': schedules_14_tu,'schedules_16_tu': schedules_16_tu,
+                                            'schedules_9_w': schedules_9_w,'schedules_11_w': schedules_11_w, 'schedules_14_w': schedules_14_w,'schedules_16_w': schedules_16_w,
+                                            'schedules_9_th': schedules_9_th,'schedules_11_th': schedules_11_th, 'schedules_14_th': schedules_14_th,'schedules_16_th': schedules_16_th,
+                                            'schedules_9_f': schedules_9_f,'schedules_11_f': schedules_11_f, 'schedules_14_f': schedules_14_f,'schedules_16_f': schedules_16_f,'training_program':training_program, 'tutors': tutors, 'groups':groups, 'modules':modules,'weeks':weeks, 'rooms':rooms}
     return render(request, 'filtered_display.html', context)
 
+
+
+@csrf_exempt
 def ajouter(request):
-    return render(request, 'ajouter.html')
+    semaine= Tutor.objects.get(is_admin=True, department= request.user.department).semaine_type
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        tutor = request.user.tutor  # Assumes the user is authenticated and linked to a Tutor instance.
+        week = 1  # Replace with the actual week if it's dynamic.
+
+        for entry in data:
+            day = entry['day']
+            start_time = parse_time(entry['time'].split(' - ')[0])
+            end_time = parse_time(entry['time'].split(' - ')[1])
+            time_slot = TimeSlot.objects.get(day__day=day, start_time=start_time, end_time=end_time)
+            
+            TutorAvailability.objects.update_or_create(
+                tutor=tutor,
+                time_slot=time_slot,
+                week=week,
+                defaults={'availability': float(entry['status'])}
+            )
+        
+        return JsonResponse({'message': 'Availability updated successfully!'})
+
+    return render(request, 'ajouter.html', {'semaine': semaine})
+
+#modifier dyal bse7 had lmera
+@login_required
+def unseen_messages(request):
+    messages = Message.objects.filter(receiver=request.user, is_read=False)
+    message_list = [
+        {
+            'id': message.id,
+            'sender': message.sender.username,
+            'subject': message.subject,
+            'body': message.body,
+            'requires_response': message.requires_response,
+        }
+        for message in messages
+    ]
+    return JsonResponse({'messages': message_list})
+
+@login_required
+def update_message_status(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        message_id = data.get('message_id')
+        action = data.get('action')  # 'confirm' or 'decline' or 'seen'
+
+        message = get_object_or_404(Message, id=message_id, receiver=request.user)
+
+        if action == 'seen':
+            message.is_seen = True
+            message.save()
+            return JsonResponse({'success': True, 'message': 'Message marked as seen.'})
+        elif action in ['confirm', 'decline'] and message.requires_response:
+            # Handle confirm or decline
+            message.is_seen = True
+            message.save()
+            # Add custom logic if needed for confirmation or decline
+            return JsonResponse({'success': True, 'message': f'Message {action}ed successfully.'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method or action.'})
+
+
+#consulter html = modifier
+def send_message(request):
+    week = request.GET.get('week', 2)
+    timeslots = TimeSlot.objects.all()
+    courses = Schedule.objects.filter(week = week, course__tutor = request.user)
+    schedules = Schedule.objects.filter(week = week)
+    schedules_9_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(9,0))
+    schedules_11_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(11,0))
+    schedules_14_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(14,0))
+    schedules_16_m = schedules.filter( time_slot__day__day='m', time_slot__start_time=time(16,0))
+    schedules_9_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(9,0))
+    schedules_11_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(11,0))
+    schedules_14_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(14,0))
+    schedules_16_tu = schedules.filter( time_slot__day__day='tu', time_slot__start_time=time(16,0))
+    schedules_9_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(9,0))
+    schedules_11_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(11,0))
+    schedules_14_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(14,0))
+    schedules_16_w = schedules.filter( time_slot__day__day='w', time_slot__start_time=time(16,0))
+    schedules_9_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(9,0))
+    schedules_11_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(11,0))
+    schedules_14_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(14,0))
+    schedules_16_th = schedules.filter( time_slot__day__day='th', time_slot__start_time=time(16,0))
+    schedules_9_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(9,0))
+    schedules_11_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(11,0))
+    schedules_14_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(14,0))
+    schedules_16_f = schedules.filter( time_slot__day__day='f', time_slot__start_time=time(16,0))
+    context= {'schedules_9_m': schedules_9_m,'schedules_11_m': schedules_11_m, 'schedules_14_m': schedules_14_m,'schedules_16_m': schedules_16_m,
+                                            'schedules_9_tu': schedules_9_tu,'schedules_11_tu': schedules_11_tu, 'schedules_14_tu': schedules_14_tu,'schedules_16_tu': schedules_16_tu,
+                                            'schedules_9_w': schedules_9_w,'schedules_11_w': schedules_11_w, 'schedules_14_w': schedules_14_w,'schedules_16_w': schedules_16_w,
+                                            'schedules_9_th': schedules_9_th,'schedules_11_th': schedules_11_th, 'schedules_14_th': schedules_14_th,'schedules_16_th': schedules_16_th,
+                                            'schedules_9_f': schedules_9_f,'schedules_11_f': schedules_11_f, 'schedules_14_f': schedules_14_f,'schedules_16_f': schedules_16_f, 'courses': courses, 'timeslots': timeslots}
+    if(request.method=='POST'):
+        schedule_to_change = request.POST.get('cours')
+        timeslot = request.POST.get('timing')
+        if not schedule_to_change or not timeslot:
+            context['error_message'] = 'Veuillez sélectionner un cours et un créneau horaire.'
+            return render(request, 'consulter.html', context)
+        schedule_to_change = Schedule.objects.get(pk = schedule_to_change)
+        timeslot = TimeSlot.objects.get(pk=timeslot)
+        schedule_victim = Schedule.objects.filter(time_slot = timeslot, course__group = schedule_to_change.course.group, week= schedule_to_change.week).first()
+        
+
+        if (not schedule_victim):
+            schedule_to_change.time_slot = timeslot
+            schedule_to_change.save()
+            success_message = 'Changement du cours avec succès'
+            context['success_message']= success_message
+            return render(request, 'consulter.html', context)
+        else:
+            sch = Schedule.objects.filter(course__tutor =schedule_victim.course.tutor, time_slot =schedule_to_change.time_slot).first()
+            if (sch):
+                error_message = 'Impossible de faire ce changement'
+                context['error_message']=error_message
+                return render(request, 'consulter.html', context)
+            else:
+                if (schedule_victim.course.group.name.split(' ')[0]==schedule_to_change.course.group.name and len(schedule_victim.course.group.name.split(' '))!=1):
+                    error_message = 'Impossible de faire ce changement'
+                    context['error_message']=error_message
+                    return render(request, 'consulter.html', context)
+                else:
+                    message = Message.objects.create(
+                    sender=request.user,
+                    receiver=schedule_victim.course.tutor,
+                    subject="Demande de changement :",
+                    body = f"Bonjour {schedule_victim.course.tutor.last_name}, \n\nJe souhaite qu'on échange nos cours. C'est-à-dire rendre votre cours '{schedule_victim.course.module.name}' pour le groupe {schedule_victim.course.group} le {timeslot.__str__()}. \n\nCordialement, \n{request.user.last_name}",
+
+                    requires_response=True, schedule_sender = schedule_to_change, schedule_receiver=schedule_victim)
+                    message.save()
+                    confirm_link = f"/confirm-message/{message.id}/"
+                    decline_link = f"/decline-message/{message.id}/"
+                    message.confirmation_link = confirm_link
+                    message.decline_link = decline_link
+                    message.save()
+                    message_attente= 'Veuillez attendre la confirmation du professeur concerné'
+                    context['message_attente']= message_attente
+                
+                    return render(request, 'consulter.html', context)
+            
+    else:
+        return render(request, 'consulter.html', context)
+
+#fct that returns the non read messages for the user
+def inbox(user):
+    # Fetch unread messages for the logged-in user
+    unread_messages = Message.objects.filter(receiver=user, is_read=False)
+    # Mark fetched messages as read
+    unread_messages.update(is_read=True)
+    return unread_messages               
+
+#for the javascript for checking new messages
+def check_new_unread_messages(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'newRecord': []})
+    unread_messages = Message.objects.filter(is_read=False, receiver=request.user)
+    unread_message_data = [
+        {
+            'id': msg.id,
+            'sender': msg.sender.username,
+            'subject': msg.subject,
+            'body': msg.body,
+            'requires_response': msg.requires_response,
+        }
+        for msg in unread_messages
+    ]
+    return JsonResponse({'newRecord': unread_message_data})
+
+# views.py
+#for confirmation and decline 
+# add the sousgroup contraint in sending the message
+
+def confirm_message(request, message_id):
+        message = get_object_or_404(Message, id=message_id)
+        # Handle confirmation logic here
+        # For example, update the schedule or notify the sender
+        message.is_confirmation = True
+        message.save()
+        message_return = Message.objects.create(
+                    sender=request.user,
+                    receiver=message.sender,
+                    subject="Confirmation :",
+                    body = f"Bonjour {message.sender}, \n\n Votre demande de changement est acceptée '. \n\nCordialement, \n{request.user}",
+
+                    requires_response=False  )
+        message_return.save()
+        return JsonResponse({'status': 'confirmed'})
+
+def decline_message(request, message_id):
+    
+        message = get_object_or_404(Message, id=message_id)
+        # Handle decline logic here
+        message.is_confirmation = False
+        message.save()
+        message_return = Message.objects.create(
+                    sender=request.user,
+                    receiver=message.sender,
+                    subject="Refus :",
+                    body = f"Bonjour {message.sender}, \n\n Votre demande de changement est refusée '. \n\nCordialement, \n{request.user}",
+
+                    requires_response=False  )
+        message_return.save()
+        return JsonResponse({'status': 'declined'})
+  
+def some_view(request):
+    if 'HTTP_REFERER' in request.META:
+        previous_url = request.META['HTTP_REFERER']
+    else:
+        previous_url = 'default/fallback/url/'  # Fallback URL if referer not available
+    
+    # Do something and redirect back
+    return redirect(previous_url)
+
+
+def sendcontact(request):
+    if (request.method=='POST'):
+        message_body = request.POST.get('sujet')
+        messag_subject = request.POST.get('object')
+        email = request.POST.get('email')
+        receiver = Tutor.objects.filter(email = email).first()
+        if receiver :
+            message= Message.objects.create(
+            sender = request.user,
+            receiver = receiver,
+            subject = messag_subject,
+            body=message_body,
+            requires_response = False
+            )
+            message.save()
+            m = 'Message envoyé avec succés.'
+            context={'message': m}
+            return render(request, 'contact.html', context)
+        else:
+            m = 'Email incorrect ou utilisateurs non existant.'
+            context={'message': m}
+            return render(request, 'contact.html', context)
+    return render(request , 'contact.html')

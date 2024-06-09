@@ -1,8 +1,6 @@
 {%extends 'base.html'%}
-{% load widget_tweaks%}
-{% block content%}
-
-
+{% load widget_tweaks %}
+{% block content %}
 
     <style>
         table {
@@ -46,7 +44,10 @@
         }
     </style>
 
-    <form id="scheduleForm">
+    <h3>Entrez préférences pour la semaine : {{ semaine }}</h3>
+
+    <form id="scheduleForm" method="post">
+        {% csrf_token %}
         <table>
             <thead>
                 <tr>
@@ -61,71 +62,74 @@
             <tbody>
                 <tr>
                     <th class="time">9:00 - 10:40</th>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="m">Disponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="tu">Disponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="w">Disponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="th">Disponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="f">Disponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="sa">Disponible</td>
-
+                    <td class="cell" data-time="9:00 - 10:40" data-day="m" data-status="1">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="tu" data-status="1">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="w" data-status="1">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="th" data-status="1">Disponible</td>
+                    <td class="cell" data-time="9:00 - 10:40" data-day="f" data-status="1">Disponible</td>
                 </tr>
                 <tr>
                     <th class="time">11:00 - 12:40</th>
-                    <td class="unavailable" data-time="11:00 - 12:40" data-day="m">Indisponible</td>
-                    <td class="cell" data-time="11:00 - 12:40" data-day="tu">Disponible</td>
-                    <td class="unsure" data-time="11:00 - 12:40" data-day="w">Pas sûr</td>
-                    <td class="cell" data-time="11:00 - 12:40" data-day="th">Disponible</td>
-                    <td class="unavailable" data-time="11:00 - 12:40" data-day="f">Indisponible</td>
-                    <td class="cell" data-time="9:00 - 10:40" data-day="sa">Disponible</td>
+                    <td class="unavailable" data-time="11:00 - 12:40" data-day="m" data-status="0">Indisponible</td>
+                    <td class="cell" data-time="11:00 - 12:40" data-day="tu" data-status="1">Disponible</td>
+                    <td class="unsure" data-time="11:00 - 12:40" data-day="w" data-status="0.5">Pas sûr</td>
+                    <td class="cell" data-time="11:00 - 12:40" data-day="th" data-status="1">Disponible</td>
+                    <td class="unavailable" data-time="11:00 - 12:40" data-day="f" data-status="0">Indisponible</td>
                 </tr>
                 <tr>
                     <th class="time">14:00 - 15:40</th>
-                    <td class="cell" data-time="14:00 - 15:40" data-day="m">Disponible</td>
-                    <td class="unavailable" data-time="14:00 - 15:40" data-day="tu">Indisponible</td>
-                    <td class="cell" data-time="14:00 - 15:40" data-day="w">Disponible</td>
-                    <td class="unsure" data-time="14:00 - 15:40" data-day="th">Pas sûr</td>
-                    <td class="unsure" data-time="14:00 - 15:40" data-day="f">Pas sûr</td>
+                    <td class="cell" data-time="14:00 - 15:40" data-day="m" data-status="1">Disponible</td>
+                    <td class="unavailable" data-time="14:00 - 15:40" data-day="tu" data-status="0">Indisponible</td>
+                    <td class="cell" data-time="14:00 - 15:40" data-day="w" data-status="1">Disponible</td>
+                    <td class="unsure" data-time="14:00 - 15:40" data-day="th" data-status="0.5">Pas sûr</td>
+                    <td class="unsure" data-time="14:00 - 15:40" data-day="f" data-status="0.5">Pas sûr</td>
                 </tr>
                 <tr>
                     <th class="time">16:00 - 17:40</th>
-                    <td class="unavailable" data-time="16:00 - 17:40" data-day="m">Indisponible</td>
-                    <td class="cell" data-time="16:00 - 17:40" data-day="tu">Disponible</td>
-                    <td class="cell" data-time="16:00 - 17:40" data-day="w">Disponible</td>
-                    <td class="cell" data-time="16:00 - 17:40" data-day="th">Disponible</td>
-                    <td class="unavailable" data-time="16:00 - 17:40" data-day="f">Indisponible</td>
+                    <td class="unavailable" data-time="16:00 - 17:40" data-day="m" data-status="0">Indisponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="tu" data-status="1">Disponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="w" data-status="1">Disponible</td>
+                    <td class="cell" data-time="16:00 - 17:40" data-day="th" data-status="1">Disponible</td>
+                    <td class="unavailable" data-time="16:00 - 17:40" data-day="f" data-status="0">Indisponible</td>
                 </tr>
             </tbody>
         </table>
     </form>
 
     <script>
-        document.querySelectorAll('.cell').forEach(cell => {
-    cell.addEventListener('click', () => {
-        if (cell.classList.contains('unavailable')) {
-            cell.dataset.status = 'unavailable';
-            cell.innerText = 'Indisponible';
-        } else if (cell.classList.contains('unsure')) {
-            cell.dataset.status = 'unsure';
-            cell.innerText = 'Pas sûr';
-        } else {
-            cell.dataset.status = 'disponible';
-            cell.innerText = 'Disponible';
-        }
-    });
-});
-
+        document.querySelectorAll('.cell, .unsure, .unavailable').forEach(cell => {
+            cell.addEventListener('click', () => {
+                if (cell.classList.contains('cell')) {
+                    cell.classList.remove('cell');
+                    cell.classList.add('unavailable');
+                    cell.innerText = 'Indisponible';
+                    cell.dataset.status = '0';
+                } else if (cell.classList.contains('unavailable')) {
+                    cell.classList.remove('unavailable');
+                    cell.classList.add('unsure');
+                    cell.innerText = 'Pas sûr';
+                    cell.dataset.status = '0.5';
+                } else if (cell.classList.contains('unsure')) {
+                    cell.classList.remove('unsure');
+                    cell.classList.add('cell');
+                    cell.innerText = 'Disponible';
+                    cell.dataset.status = '1';
+                }
+            });
+        });
 
         function submitForm() {
-            const data = Array.from(document.querySelectorAll('.cell')).map(cell => ({
+            const data = Array.from(document.querySelectorAll('td')).map(cell => ({
                 time: cell.dataset.time,
                 day: cell.dataset.day,
                 status: cell.dataset.status
             }));
 
-            fetch('/submit/', {
+            fetch('{% url "ajout" %}', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
                 body: JSON.stringify(data)
             })
@@ -140,7 +144,4 @@
         }
     </script>
 
-
-
-
-{%endblock%}
+{% endblock %}
