@@ -1,0 +1,113 @@
+\chapter{Analyse et conception}
+\label{chap:Chapter 2 title}
+Ce chapitre propose une étude de l'existant, une analyse et une description des besoins, ainsi que les étapes prévues pour réaliser le projet.
+\newpage
+\section{Étude et analyse des besoins}
+\subsection{Étude de l'existant}
+La planification des emplois du temps est trés importante pour les étudiants et les profs à l'ENSIAS. Souvent, les étudiants trouvent que les emplois du temps sont publiés tard, et ça prend beaucoup de temps au chef de filière pour contacter tous les profs et trouver un arrangement qui convient à tout le monde. C'est pour ça qu'on a besoin d'une application web qui simplifie ce processus long.
+\subsection{Capture des besoins}
+Le projet qui nous avons devloppé vise à satisfaire les besoins suivants :
+\subsubsection*{Besoins fonctionnels}
+\begin{itemize}
+    \item Gestion des enseignants et de leur disponibilité :\\
+    -La possibilité pour les profs de choisir les heures pendant les quelles ils seront disponibles.\\
+    -La possibilité d'ajouter, modifier, et supprimer les informations des professeurs par le chef de filiére.
+    \item Gestion des informations des salles et de leurs capacités :
+    \item Génération d'emplois du temps en respectant les contraintes suivantes :\\
+    -Un enseignant ne peut enseigner qu'un seul cours à la fois.\\
+    -Une salle ne peut accueillir qu'un seul cours à la fois.\\
+    -Un groupe d'étudiants ne peut avoir qu'un seul cours à la fois.\\
+    -Un groupe global et ses sous-groupes ne peuvent pas avoir de cours différents en même temps.\\
+    -Les cours ne peuvent pas être planifiés pendant les jours fériés.\\
+    -Les cours magistraux sont préférablement planifiés le matin.\\
+    -Les enseignants ne préfèrent pas avoir des heures creuses entre leurs séances.\\
+    -Les horaires du mercredi après-midi et du samedi matin sont non préférables pour les professeurs.
+\end{itemize}
+\subsubsection*{Besoins non-fonctionnels}
+\begin{itemize}
+  \item Performance : L'application doit générer les emplois du temps de manière efficace et en temps raisonnable, même avec un grand nombre d'enseignants, de cours, et de contraintes.
+  \item Scalabilité : L'application doit être capable de s'adapter à une augmentation du nombre d'enseignants, de cours, de salles et d'étudiants sans perte de performance.
+  \item Accessibilité : L'application doit être accessible via le web et compatible avec les principaux navigateurs et appareils.
+  \item Sécurité : L'application contient des données de l'école, et donc il faut les protéger en procédant par des logins et mots de passe.
+  \item Facilité d'utilisation : L'interface utilisateur doit être  facile à utiliser pour les chefs de filiéres, les enseignants. 
+\end{itemize} 
+\newpage
+\section{Conception de la solution}
+\subsection{Diagramme de classes}
+    \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=19cm,height=19cm]{Logos/diagramme de classe UML (2).png}
+        \caption{Scénario :Diagramme de classe. }
+    \end{figure}
+\newpage
+\subsection{Diagramme de cas d'utilisation}
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=17cm,height=20cm]{Logos/usecase.png}
+        \caption{Diagramme de cas d'utilisation. }
+    \end{figure}
+\newpage 
+\subsection{Diagrammes de séquence}
+Les diagrammes suivants représentent quelque scénarios possibles pour l'utilisateur de l'application que ça soit le prof ou le chef de fillière:
+\subsubsection*{S'authentifier}
+À travers l'interface de connexion, l'utilisateur saisit son identifiant et son mot de passe. En cas d'erreur, l'application lui demande de retaper ses informations. Si l'utilisateur a oublié son mot de passe, il peut le renouveler.
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=16cm]{Logos/ds1 (1).jpg}
+        \caption{Scénario d'authentification. }
+    \end{figure}   
+\newpage
+\subsubsection*{Ajouter les préférences}
+Le professeur sélectionne les heures durant lesquelles il est disponible.
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/DS22.jpg}
+        \caption{Scénario :Ajouter les préférences. }
+    \end{figure}
+\newpage
+\subsubsection*{Décaler/Annuler une séance}
+Le professeur peut reporter sa séance à une autre semaine, en précisant la semaine de rattrapage souhaitée. Si le chef de filière confirme cela, la séance sera annulée pour être reportée à la semaine indiquée par le professeur. Sinon, un message sera envoyé au professeur pour l'en informer.\\
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/ds8.jpg}
+        \caption{Scénario :Décaler/Annuler une séance. }
+    \end{figure}   
+\newpage
+\subsubsection*{Modifier l'horaire d'une séance}
+Le professeur peut modifier l'horaire d'une séance dans la même semaine si le groupe concerné est disponible pendant la nouvelle plage horaire souhaitée par le professeur, ou si le groupe a une séance avec un autre professeur prêt à échanger ses horaires. Sinon, un message indiquera au professeur que la modification est impossible.
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=17cm,height=18cm]{Logos/ds7 (5).jpg}
+        \caption{Scénario :Modifier l'horaire d'une séance }
+    \end{figure}
+\newpage
+    
+\subsubsection*{Créer prof}
+Dans l'interface Ajouter/Supprimer, le chef de filière peut ajouter ou supprimer un professeur, et il peut également ajouter ou supprimer un module
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/Diagramme sans nom.jpg}
+        \caption{Scénario :Créer un prof. }
+    \end{figure}
+\newpage
+\subsubsection*{Supprimer un  prof}
+
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/DS3.jpg}
+        \caption{Scénario :Supprimer un prof. }
+    \end{figure}
+\newpage
+\subsubsection*{Créer module}
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/DS5.jpg}
+        \caption{Scénario :Créer un module. }
+    \end{figure}
+\newpage
+\subsubsection*{Supprimer un  module}
+ \begin{figure}[!htb]
+      \centering
+        \includegraphics[width=15cm,height=18cm]{Logos/D.jpg}
+        \caption{Scénario :Supprimer un module.}
+    \end{figure}
