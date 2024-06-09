@@ -1,43 +1,221 @@
 {% extends 'base.html'%}
 {% csrf_token %} <!--hadi dyal modifier-->
-<h3>Consultation et demande de changement de cours programmés</h3>
-<form method="post">
-    {% csrf_token %}
+{%block content%}
+<style>
+
+select{
+        
+        width: 170px;
+        height: 30px;
+    }
+    .sub-case {
+    flex: 1;
+    border: 1px solid rgb(99, 97, 97);
+    text-align: center;
+    padding: 5px;
+}
+
+.int{
+    font-size: 20px;
+}
+
+.filters{
+    display: inline-flex;
+    justify-content: space-evenly;
+    margin-left: 10px;
+}
+
+.optionAS {
+    width: 30%;
+    height: auto;
+    margin: 25px;
+    padding: 20px;
+    border: 1px solid rgb(99, 97, 97);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h4{
+    text-align: center;
+}
+</style>
+<div >
+    
+<div class="table_modiform" style="display: flex;">
+    <div class="optionAS">
+    
+        <h3>Sélectionner le cours à changer:</h3><br>
+        <form action="{%url 'modify'%}" method="post">
+        {% csrf_token %}
+        <label for="cours">Cours:</label><br>
+        <select name="cours" id="cours"  class="multiple-select" >
+            <option value="">Choisissez</option>
+            {% for schedule in courses %}
+                <option value="{{ schedule.id }}" {% if schedule == i|stringformat:'s' %}selected{% endif %}>{{ schedule.course.module.name }} : {{schedule.group }} : {{schedule.time_slot.start_time}}</option>
+            {% endfor %}
+        </select><br><br>
+        <h3>Sélectionner le timing</h3><br>
+        <label for="timing">Timing:</label><br>
+        <select name="timing" id="timing"  class="multiple-select" >
+            <option value="">Choisissez</option>
+            {% for timeslot in timeslots %}
+                <option value="{{ timeslot.id }}" {% if timeslot == i|stringformat:'s' %}selected{% endif %}>{{ timeslot.day.day }} : {{timeslot.start_time }} - {{timeslot.end_time}}</option>
+            {% endfor %}
+        </select><br><br>
+        <input type="submit" value="Changer">
+    </form>
+    {%if error_message%}
+    <h4>{{error_message}}</h4>
+    {%elif success_message%}
+    <h4>{{ success_message}}</h4>
+    {%else%}
+    <h4>{{message_attente}}</h4>
+    {%endif%}
+
+    </div>
+<div>
     <table>
-        <tr>
-            <th>Current Courses</th>
-        </tr>
-        {% for schedule in courses %}
-            <tr>
-                <td>{{ schedule.course.module.name }} - {{ schedule.time_slot.day }} {{ schedule.time_slot.start_time }} - {{ schedule.time_slot.end_time }}</td>
-                <td><button type="button" class="select-current" data-timeslot="{{ course.time_slot.id }}">Select</button></td>
-            </tr>
-        {% endfor %}
+        <thead style="color: rgb(98, 203, 82);">
+          <tr>
+            <th>Heures</th>
+            <th>Lundi</th>
+            <th>Mardi</th>
+            <th>Mercredi</th>
+            <th>Jeudi</th>
+            <th>Vendredi</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td style="color: rgb(254, 69, 69);">09:00 - 10:40</td>
+            <td id="1 1" class="int" >
+                {% for schedule in schedules_9_m %}
+                <div class="sub-case">{{ schedule.course.tutor.last_name }}-{{ schedule.course.group }}-{{ schedule.room }}-{{ schedule.course.module.name }}</div>
+                {% endfor %}
+            </td>
+          <td id="1 2" class="int" >
+                {% for sch in schedules_9_tu %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="1 3" class="int" >
+                {% for sch in schedules_9_w %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="1 4" class="int" >
+                {% for sch in schedules_9_th %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="1 5" class="int" >
+                {% for sch in schedules_9_f %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td style="color: rgb(254, 69, 69);">11:00 - 12:40</td>
+            <td id="2 1" class="int" >
+                {% for sch in schedules_11_m %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="2 2" class="int" >
+                {% for sch in schedules_11_tu %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="2 3" class="int" >
+                {% for sch in schedules_11_w %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="2 4" class="int" >
+                {% for sch in schedules_11_th %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="2 5" class="int" >
+                {% for sch in schedules_11_f %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td style="color: rgb(254, 69, 69);">14:00 - 15:40</td>
+            <td id="3 1" class="int" >
+                {% for sch in schedules_14_m %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="3 2" class="int" >
+                {% for sch in schedules_14_tu %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="3 3" class="int" >
+                {% for sch in schedules_14_w %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="3 4" class="int" >
+                {% for sch in sschedules_14_th %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="3 5" class="int" >
+                {% for sch in schedules_14_f %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+          </tr>
+          <tr>
+            <td style="color: rgb(254, 69, 69);">16:00 - 17:40</td>
+            <td id="4 1" class="int" >
+                {% for sch in schedules_16_m %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="4 2" class="int" >
+                {% for sch in schedules_16_tu %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="4 3" class="int" >
+                {% for sch in schedules_16_w %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="4 4" class="int" >
+                {% for sch in schedules_16_th %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+            <td id="4 5" class="int" >
+                {% for sch in schedules_16_f %}
+                <div class="sub-case">{{ sch.course.tutor.last_name }}-{{ sch.course.group }}-{{ sch.room }}-{{ sch.course.module.name }}</div>
+                {% endfor %}
+            </td>
+          </tr>
+        </tbody>
+
     </table>
-    <input type="hidden" name="current_timeslot" id="current-timeslot">
-    <table>
-        <tr>
-            <th>Available Time Slots</th>
-        </tr>
-        {% for timeslot in timeslots %}
-            <tr>
-                <td>{{ timeslot.day }} {{ timeslot.start_time }} - {{ timeslot.end_time }}</td>
-                <td><button type="button" class="select-new" data-timeslot="{{ timeslot.id }}">Select</button></td>
-            </tr>
-        {% endfor %}
-    </table>
-    <input type="hidden" name="new_timeslot" id="new-timeslot">
-    <button type="submit">Request Change</button>
-</form>
+</div><br><br><br>
+<h3 ></h3>
+</div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    document.querySelectorAll('.select-current').forEach(button => {
-        button.addEventListener('click', () => {
-            document.getElementById('current-timeslot').value = button.getAttribute('data-timeslot');
-        });
-    });
-    document.querySelectorAll('.select-new').forEach(button => {
-        button.addEventListener('click', () => {
-            document.getElementById('new-timeslot').value = button.getAttribute('data-timeslot');
-        });
-    });
+// Initialize Select2 on the select elements
+$(document).ready(function() {
+    $('.multiple-select').select2();
+});
 </script>
+
+
+{%endblock%}

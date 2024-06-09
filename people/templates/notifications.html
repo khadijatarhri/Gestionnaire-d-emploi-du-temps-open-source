@@ -1,0 +1,189 @@
+<!-- templates/notifications.html -->
+ {%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'style.css'%}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&family=Truculenta:opsz,wght@12..72,100..900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+
+body{
+        font-family: Rubik;
+        background: linear-gradient(to top right, rgb(250,250,250), rgb(232,232,232));
+        height: auto;
+        
+    }
+        .message {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        .message.read {
+            opacity: 0.6;
+        }
+        .message .content {
+            display: none;
+            padding-top: 10px;
+        }
+        .notification-popup {
+            position: fixed;
+            top: 0;
+            right: 0;
+            background: rgb(165, 169, 164);
+            color: rgb(0, 0, 0);
+            padding: 10px;
+            border: 1px solid rgb(81, 87, 80);
+            display: none;
+            border-radius: 10px;
+        }
+        .notification-popup .close-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            float: right;
+            cursor: pointer;
+        }
+        ul {
+            list-style-type: none; /* Remove default ul decoration */
+            padding: 0;
+        }
+    </style>
+<script>/*
+    $(document).ready(function() {
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        function checkNewMessages() {
+            $.get("{% url 'check_new_messages' %}", function(data) {
+                if (data.new_messages) {
+                    $('.notification-popup').show();
+                }
+            });
+        }
+
+        setInterval(checkNewMessages, 180000); // Check for new messages every 3 minutes
+
+        $('.notification-popup .close-btn').click(function(event) {
+            event.stopPropagation();
+            $('.notification-popup').hide();
+        });
+
+        $('.notification-popup').click(function() {
+            window.location.href = "{% url 'notifications' %}";
+        });
+
+        $('.message').click(function() {
+            var $message = $(this);
+            var content = $message.find('.content');
+            content.toggle();
+            if (!content.is(':visible')) return; // If hiding, do nothing
+
+            if (!$message.hasClass('read')) {
+                var messageId = $message.data('id');
+                $.post("{% url 'mark_as_read' 0 %}".replace('0', messageId), {
+                    'csrfmiddlewaretoken': csrftoken
+                }, function() {
+                    $message.addClass('read');
+                });
+            }
+        });
+
+        $('form').submit(function(event) {
+            event.preventDefault();
+            var $form = $(this);
+            var $buttons = $form.find('button');
+            $buttons.prop('disabled', true); // Disable the buttons
+
+            var actionUrl = $form.attr('action');
+            $.post(actionUrl, $form.serialize(), function(response) {
+                if (response.status === 'confirmed' || response.status === 'declined') {
+                    $form.closest('.message').addClass('read').remove();
+                } else {
+                    $buttons.prop('disabled', false); // Re-enable the buttons if an error occurs
+                }
+            }).fail(function() {
+                $buttons.prop('disabled', false); // Re-enable the buttons if an error occurs
+            });
+        });
+    });*/
+</script>
+
+</head>
+<body>
+
+    <header class="header">
+        <nav class="navbar">
+            <a href="{{ request.META.HTTP_REFERER }}" class="logo"><img src="{% static 'logo1.png'%}" id="logo_img" style="width: 200px; margin-top: 10px;"></a>
+            <ul style="list-style-type: none;font-size: 16px;">
+                <li><a href="{%url 'consulter'%}" class="green">Consulter</a></li>
+                <li><a href="{%url 'modify'%}" class="red" >Modifier</a></li>
+
+                <li><a href="{%url 'ajout'%}" class="green">Semaine Type</a></li>
+                <li><a href="{%url 'select_week_and_course'%}" class="red">Décaler/Annuler</a></li>
+                {%block nav_items%}{% endblock%}
+
+                <li><a href="ical" class="red">iCal</a></li>
+                <li><a href="{%url 'aide' %}" class="green">Aide</a></li>
+                <li><a href="{%url 'contact' %}" class="red">Contact</a></li>
+                <li><a href="{%url 'notifications'%}" class="green">Messagerie</a></li>
+
+            </ul>
+            {% if user.is_authenticated %}
+            <a href="{% url 'logout'%}"><button class="messageb" type="button" >Se déconnecter</button></a>
+            {%else%}
+                <a href="{% url 'login'%}"><button class="messageb" type="button" >Se connecter</button></a>
+            {% endif %} 
+        </nav>
+    </header>
+    <div class="notification-popup">
+        <button class="close-btn">&times;</button>
+        Nouveau message, cliquez pour voir.
+    </div>
+    <h1 style="color: rgb(44,44,44);font-weight: 500;">Bonjour {{request.user}}</h1><br>
+    <h1 style="color: rgb(98, 203, 82);font-weight: 500;">Messages :</h1><br>
+    <ul>
+        {% for message in messages %}
+        <li class="message {% if message.is_read %}read{% endif %}" data-id="{{ message.id }}">
+            <p>De {{ message.sender.last_name }} : {{ message.subject }}...</p>
+            <div class="content">
+                <p>{{ message.body }}</p>
+                {%if message.requires_response%}
+                <div style="display: inline-block;">
+                <form action="{% url 'confirm_message' message.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Confirm</button>
+                </form>
+                <form action="{% url 'decline_message' message.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Decline</button>
+                </form>
+            </div>
+                {%endif%}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

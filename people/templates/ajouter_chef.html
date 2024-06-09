@@ -7,105 +7,17 @@
 {%endblock%}
 
 {%block content%}
-<!--<div class="drop">
-    <h3>Ajouter object (js make it )</h3>
-    <div class="dropdown">
-        <div class="select">
-            <span class="Selected">Professeur</span>
-        </div>
-        <ul class="menu">
-            <li class="active">Professeur</li>
-            <li>Module</li>
-        </ul>
-    </div>
-</div>
-    <br><br>
-    <div class="drop">
-        <h3>Supprimer object (js make it later)</h3>
-        <div class="dropdown">
-            <div class="select">
-                <span class="Selected">Professeur</span>
-            </div>
-            <ul class="menu">
-                <li class="active">Professeur</li>
-                <li>Module</li>
-            </ul>
-        </div>
-    </div>-->
 
 
 <style>
 
+select{
+        
+        width: 170px;
+        height: 30px;
+    }
 
 
-.select-menu {
-    width: 100%;
-    position: relative;
-    margin: 20px 0;
-}
-
-.select-menu .select-btn {
-    display: flex;
-    width: 100%;
-    height: 55px;
-    background: #fff;
-    padding: 0 20px;
-    font-size: 18px;
-    font-weight: 400;
-    border-radius: 8px;
-    align-items: center;
-    cursor: pointer;
-    justify-content: space-between;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.select-btn i {
-    font-size: 25px;
-    transition: 0.3s;
-}
-
-.select-menu.active .select-btn i {
-    transform: rotate(-180deg);
-}
-
-.select-menu .options {
-    position: absolute;
-    width: 100%;
-    margin-top: 10px;
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 1;
-}
-
-.select-menu.active .options {
-    display: block;
-}
-
-.options .option {
-    display: flex;
-    height: 55px;
-    cursor: pointer;
-    padding: 0 16px;
-    border-radius: 8px;
-    align-items: center;
-    background: #fff;
-}
-
-.options .option:hover {
-    background: #F2F2F2;
-}
-
-.option i {
-    font-size: 25px;
-    margin-right: 12px;
-}
-
-.option .option-text {
-    font-size: 18px;
-    color: #333;
-}
 
 /* General styling for the form container */
 .ajouter_chef {
@@ -117,6 +29,7 @@
 .optionAS {
     width: 40%;
     margin: 25px;
+    height: auto;
     padding: 20px;
     border: 1px solid rgb(99, 97, 97);
     border-radius: 10px;
@@ -195,6 +108,12 @@
 .success {
     color: rgb(98, 203, 82);
 }
+.ajouter_chef{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 
 </style>
 <div class="ajouter_chef">
@@ -204,42 +123,31 @@
         <form action="{% url 'creer_prof' %}" method="post">
             {% csrf_token %}
             <label for="username">Username</label>
-            <input type="text" name="username" placeholder="Username"><br>
+            <input type="text" name="username" placeholder="Username" required><br>
             <label for="email">Email</label>
-            <input type="text" name="email" placeholder="Email"><br>
+            <input type="text" name="email" placeholder="Email"required><br>
             <label for="departement">Département</label>
-            <div class="select-menu" id="select-menu-d-ap">
-                <div class="select-btn">
-                    <span class="sbtn-text">Selectionner une option</span>
-                    <i class="bx bx_chevron-down"></i>
-                </div>
-                <ul class="options">
-                    <li class="option">
-                        <span class="option-text">Génie Logiciel</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Web and Mobile Engineering</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Informatique et Aide à la Décision</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Réseaux de communications</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Langues et Communication</span>
-                    </li>
-                </ul>
-            </div>
-            <input type="hidden" name="selected_option_d_ap" id="selected-option-d-ap">
+                <select  name="dep1">
+                    <option value="">Selectionner une option</option>
+                        <option value="gl">Génie Logiciel</option>
+
+                        <option value="wme">Web and Mobile Engineering</option>
+
+                        <option value="iad">Informatique et Aide à la Décision</option>
+
+                        <option value="ise">Ingénierie des Systèmes Embarqués</option>
+
+                        <option value="rc">Réseaux de communications</option>
+
+                        <option value="lc">Langues et Communication</option>
+
+                </select>
+
             <div class="submit_c"><input type="submit" value="Créer"></div>
         </form>
-        {% if error_message1 %}
+        {% if error_message1 is not NONE%}
             <h3 class="error">{{ error_message1 }}</h3>
-        {% elif success_message1 %}
+        {% elif success_message1 is not NONE%}
             <h3 class="success">{{ success_message1 }}</h3>
         {% endif %}
     </div>
@@ -252,64 +160,39 @@
             <label for="name">Name</label>
             <input type="text" name="name" placeholder="Name" required><br>
             <label for="department">Département :</label>
-            <div class="select-menu" id="select-menu-d-am">
-                <div class="select-btn">
-                    <span class="sbtn-text">Selectionner une option</span>
-                    <i class="bx bx_chevron-down"></i>
-                </div>
-                <ul class="options">
-                    <li class="option">
-                        <span class="option-text">Génie Logiciel</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Web and Mobile Engineering</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Informatique et Aide à la Décision</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Réseaux de communications</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Langues et Communication</span>
-                    </li>
-                </ul>
-            </div>
-            <input type="hidden" name="selected_option_d_am" id="selected-option-d-am">
+            <select  name="dep2">
+                <option value="">Selectionner une option</option>
+                    <option value="gl">Génie Logiciel</option>
+
+                    <option value="wme">Web and Mobile Engineering</option>
+
+                    <option value="iad">Informatique et Aide à la Décision</option>
+
+                    <option value="ise">Ingénierie des Systèmes Embarqués</option>
+
+                    <option value="rc">Réseaux de communications</option>
+
+                    <option value="lc">Langues et Communication</option>
+
+            </select>
+
             <label for="filiere">Filière :</label>
-            <div class="select-menu" id="select-menu-f-am">
-                <div class="select-btn">
-                    <span class="sbtn-text">Selectionner une option</span>
-                    <i class="bx bx_chevron-down"></i>
-                </div>
-                <ul class="options">
-                    <li class="option">
-                        <span class="option-text">Génie Logiciel</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Buisness intelligence & analytics</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Ingénieurie data science & iot</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Sécurité des systèmes informatiques</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Ingénierie des Systèmes Embarqués</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Smart suply chaine & logistics</span>
-                    </li>
-                    <li class="option">
-                        <span class="option-text">Ingénierie de la data et finance digitale</span>
-                    </li>
-                </ul>
-            </div>
-            <input type="hidden" name="selected_option_f_am" id="selected-option-f-am">
+
+                <select  name="promo">
+                    <option value="">Selectionner une option</option>
+                    <option value="gl">Génie Logiciel</option>
+                    <option value="bia">Buisness intelligence & analytics</option>
+                    <option value="idsit">Ingénieurie data science & iot</option>
+                    <option value="ssi">Sécurité des systèmes informatiques</option>
+
+                    <option value="sse">Ingénierie des Systèmes Embarqués</option>
+
+                    <option value="2scl">Smart suply chaine & logistics</option>
+
+                    <option value="idf">Ingénierie de la data et finance digitale</option>
+                </select>
+
+
             <div class="niveau">
                 <label for="annee">Niveau :</label>
                 <div><input type="radio" name="annee" value="1A"><label for="annee">1A</label></div>
@@ -358,38 +241,9 @@
     </div>
 </div>
  
-<script >
 
-// Mapping from full text to abbreviations
-const textToAbbrev = {
-    "Génie Logiciel": "gl",
-    "Buisness intelligence & analytics": "bia",
-    "Ingénieurie data science & iot": "idsit",
-    "sécurité des systèmes informatiques": "ssi",
-    "Ingénierie des Systèmes Embarqués": "sse",
-    "Smart suply chaine & logistics": "2scl",
-    "Ingénierie de la data et finance digitale": "idf"
-};
 
-document.querySelectorAll('.select-menu').forEach(menu => {
-    const selectBtn = menu.querySelector('.select-btn');
-    const options = menu.querySelectorAll('.option');
-    const sBtn_text = menu.querySelector('.sbtn-text');
-    const hiddenInput = menu.querySelector('input[type="hidden"]');
 
-    selectBtn.addEventListener('click', () => menu.classList.toggle('active'));
 
-    options.forEach(option => {
-        option.addEventListener('click', () => {
-            let selectedOption = option.querySelector('.option-text').innerText;
-            sBtn_text.innerText = selectedOption;
-
-            hiddenInput.value = selectedOption;
-            menu.classList.remove('active');
-        });
-    });
-});
-</script>
-    {% endblock %}
-
+{% endblock %}
 

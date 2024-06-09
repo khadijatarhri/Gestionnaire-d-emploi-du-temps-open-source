@@ -17,6 +17,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    height: auto;
 }
 
 .optionAS {
@@ -117,8 +118,20 @@
     
 <div class="ajouter_chef">
     <div id="gen_edt" class="optionAS"><br>
+        <h3 class="a">Créer semaine type pour que les profs puissent entrer leurs préférences :</h3><br>
+        <form method="post" name="stype" action="{%url 'stype'%}">
+            {% csrf_token %}
+            <label for="week">Semaine type</label>
+            <input type="text" name="week" required><br>
+            <div class="submit_c"><input type="submit" value="Créer semaine"></div>
+            {%if message is not None%}
+            <h4>{{message}}</h4>
+            {%endif%}
+        </form>
+    </div>
+    <div id="gen_edt" class="optionAS"><br>
         <h3 class="a">Générer EDT :</h3><br>
-        <form method="post" name="gen">
+        <form method="post" name="gen" action="{%url 'generer'%}">
             {% csrf_token %}
             <label for="week">Semaine type</label>
             <input type="text" name="week" required><br>
@@ -132,7 +145,7 @@
         </form>
     </div>
     <div id="apply_edt" class="optionAS">
-        <form method="post" name="app"><br>
+        <form method="post" name="app" action="{%url 'apply_edt'%}"><br>
             <h3 class="s">Appliquer Edt sur :</h3><br>
             <label for="week">Semaine type à appliquer</label>
             <input type="text" name="week" required>
@@ -148,6 +161,9 @@
             <label for="ending_week">Semaine de fin (incluse) :</label>
             <input type="text" name="ending_week" required>
             <div class="submit_c"><input type="submit" value="Appliquer Edt"></div>
+            {%if message1 is not None%}
+            <h4>{{message1}}</h4>
+            {%endif%}
         </form>
     </div>
 </div>

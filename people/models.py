@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractUser
 
 class Department(models.Model):
@@ -29,6 +29,8 @@ class Tutor(AbstractUser):
         ('ise', 'Ingénierie des Systèmes Embarqués'),
         ('lc', 'Langues et Communication')
     ], default='gl')
+    semaine_type = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(53)], null=True, blank=True)
+
 
 
 
